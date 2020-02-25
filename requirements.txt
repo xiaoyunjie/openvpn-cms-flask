@@ -18,7 +18,7 @@ requests==2.18.4
 six==1.12.0
 SQLAlchemy==1.2.11
 toml==0.10.0
-urllib3==1.22
+urllib3==1.24.2
 Werkzeug==0.14.1
 WTForms==2.2.1
 oss2==2.6.1
