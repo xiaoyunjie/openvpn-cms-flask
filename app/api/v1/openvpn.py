@@ -6,8 +6,8 @@
 # @Software: PyCharm
 # @contact : browser_hot@163.com
 
-import subprocess,re
-from flask import jsonify
+import re, os
+from flask import jsonify, send_from_directory, make_response
 from lin import route_meta, group_required, login_required
 from lin.exception import Success,ParameterException
 from lin.redprint import Redprint
@@ -69,7 +69,7 @@ def delete_openvpnuser():
         command = ["/usr/local/bin/vpnuser", "del", form.username.data]
         command = ' '.join(str(d) for d in command)
         remote_server.onetime_shell(command)
-        return Success(msg='注销创建成功')
+        return Success(msg='注销成功')
 
 # 更新用户mac
 @openvpn_api.route('/update', methods=['POST'])
@@ -158,6 +158,17 @@ def search_ip_info():
     form = IPSearchForm().validate_for_api()
     ip = OpenVPNLogInfo.search_ip_info(form.openvpn_ip.data)
     return jsonify(ip)
+
+# 下载证书
+@openvpn_api.route('/download', methods=['GET'])
+# @login_required
+def download_cert():
+    form = CreateUserForm().validate_for_api()
+    filename = form.username.data
+    directory = os.path.abspath('/opt/vpnuser/')
+    response = make_response(send_from_directory(directory, filename, as_attachment=True))
+    response.headers["Content-Disposition"] = "attachment; filename={}".format(file_name.encode().decode('latin-1'))
+    return response
 
 # 查看当前已连接客户端数量
 @openvpn_api.route('clientsconnected', methods=['GET'])

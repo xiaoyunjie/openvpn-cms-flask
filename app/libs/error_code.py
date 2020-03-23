@@ -19,9 +19,9 @@ class RefreshException(APIException):
 class  OpenVPNNotFound(APIException):
     code = 404
     msg = '没有相关用户信息'
-    error_code = 80010
+    error_code = 10020
 
 class  VirtualIPNotFound(APIException):
     code = 404
     msg = '没有相关IP和MAC信息'
-    error_code = 80010
+    error_code = 10020

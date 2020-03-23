@@ -165,8 +165,9 @@ class UserSearchForm(Form):
     openvpn_user_info= StringField(validators=[DataRequired(message='必须传入关键字')])
 
 class CreateUserForm(Form):
-    username = StringField(validators=[DataRequired(message='必须传入用户名'),length(min=2, max=20, message='用户名长度必须在2~20之间')])
-    nickname = StringField(validators=[DataRequired(message='必须传入姓名昵称'),length(min=2, max=20, message='用户名长度必须在2~20之间')])
+    username = StringField(validators=[DataRequired(message='必须传入用户名'),length(min=1, max=20, message='用户名长度必须在1~20之间')])
+    # nickname = StringField(validators=[DataRequired(message='必须传入姓名昵称'),length(min=2, max=20, message='用户名长度必须在2~20之间')])
+    nickname = StringField(validators=[length(max=20, message='用户名长度不能超过20')])
     summary = StringField(validators=[length(max=1000,message='备注信息不能超过1000')])
 
 class IPSearchForm(Form):

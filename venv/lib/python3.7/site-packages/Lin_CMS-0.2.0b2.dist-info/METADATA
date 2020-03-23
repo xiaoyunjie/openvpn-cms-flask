@@ -1,0 +1,29 @@
+Metadata-Version: 2.1
+Name: Lin-CMS
+Version: 0.2.0b2
+Summary: A CMS of Flask
+Home-page: https://gitee.com/gaopedro/Alkaid/tree/master
+Author: pedroGao
+Author-email: 1312342604@qq.com
+Maintainer: pedroGao
+Maintainer-email: 1312342604@qq.com
+License: MIT
+Keywords: flask,CMS,authority,jwt
+Platform: any
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3.6
+Description-Content-Type: text/markdown
+Requires-Dist: WTForms (==2.2.1)
+Requires-Dist: Werkzeug (==0.14.1)
+Requires-Dist: Flask (==1.0.2)
+Requires-Dist: SQLAlchemy (==1.2.11)
+Requires-Dist: Flask-JWT-Extended (==3.12.1)
+Requires-Dist: Flask-SQLAlchemy (==2.3.2)
+
+一个 Python 🤷 版的 CMS 🔥
+
+
