@@ -6,24 +6,34 @@
 # @Software: PyCharm
 # @contact : browser_hot@163.com
 
-import re, os
-from flask import jsonify, send_from_directory, make_response
-from lin import route_meta, group_required, login_required
-from lin.exception import Success,ParameterException
-from lin.redprint import Redprint
-from app.libs.error_code import VirtualIPNotFound,OpenVPNNotFound
+import math
+import os
+import re
 
-from app.models.openvpn import OpenVPNUser, OpenVPNLogInfo
-from app.validators.forms import UserSearchForm, CreateUserForm, IPSearchForm, InfoSearchForm
+from flask import jsonify, send_from_directory, make_response, request
+from lin import route_meta, group_required, login_required
+from lin.exception import Success, ParameterException, NotFound
+from lin.redprint import Redprint
+from sqlalchemy import text
 
 from app.libs.shell import Remote_cmd
+from app.libs.utils import get_page_from_query, json_res, paginate
+from app.models.openvpn import OpenVPNUser, OpenVPNLogInfo
+from app.validators.forms import UserSearchForm, CreateUserForm, IPSearchForm, HistoryInfoForm
+from app.libs.manager_info import OpenvpnSocket
 
 openvpn_api = Redprint('openvpn')
+# 远程shell脚本执行
 remote_server = Remote_cmd('192.168.149.150', '22222', 'root', 'epointP@ssw0rd')
+
+# openvpn后台manager信息抽取
+manager_info = OpenvpnSocket()
+
 
 # 创建用户
 @openvpn_api.route('', methods=['POST'])
-# @login_required
+@route_meta(auth='创建openvpn用户', module='用户', mount=True)
+@group_required
 def create_user():
     form = CreateUserForm().validate_for_api()
     result = OpenVPNUser.new_user(form)
@@ -34,34 +44,32 @@ def create_user():
         remote_server.onetime_shell(command)
         return Success(msg='用户创建成功')
 
-    # if result is True:
-    #     command = ["/usr/local/bin/vpnuser", "add", form.username.data]
-    #     p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
-    #     p.wait()
-    #     if p.poll() == 0:
-    #         print(p.communicate())
-    #         return Success(msg='用户创建成功')
-    #     else:
-    #         raise ParameterException(msg="vpnuser创建失败")
 
 # 查询单个用户
 @openvpn_api.route('/<vid>', methods=['GET'])
-# @login_required
+@login_required
 def get_user(vid):
     user = OpenVPNUser.get_detail(vid)
     return jsonify(user)
 
+
 # 查询所有用户
 @openvpn_api.route('', methods=['GET'])
-# @login_required
+@login_required
 def get_users():
-    users = OpenVPNUser.get_all()
-    return jsonify(users)
+    start, count = paginate()
+    users = OpenVPNUser.get_all(start, count)
+    # users = OpenVPNUser.query.filter(OpenVPNUser.time)
+    total = OpenVPNUser.get_total_nums()
+    total_page = math.ceil(total / count)
+    page = get_page_from_query()
+    return json_res(count=count, page=page, total=total, total_page=total_page, items=users)
+
 
 # 根据username注销用户
-@openvpn_api.route('', methods=['DELETE'])
-@route_meta(auth='注销openvpn账号', module='用户')
-# @group_required
+@openvpn_api.route('/deluser', methods=['DELETE', 'POST'])
+@route_meta(auth='注销openvpn账号', module='用户', mount=True)
+@group_required
 def delete_openvpnuser():
     form = CreateUserForm().validate_for_api()
     result = OpenVPNUser.delete_user(form)
@@ -71,63 +79,76 @@ def delete_openvpnuser():
         remote_server.onetime_shell(command)
         return Success(msg='注销成功')
 
+
 # 更新用户mac
 @openvpn_api.route('/update', methods=['POST'])
-# @login_required  # 只有在登入后后才可访问
+@login_required  # 只有在登入后后才可访问
 def update_mac():
-    form = IPSearchForm().validate_for_api()
-    command = ["/usr/local/bin/update_user_mac.sh", form.openvpn_ip.data]
+    # form = IPSearchForm().validate_for_api()
+    # command = ["/usr/local/bin/update_user_mac.sh", form.openvpn_ip.data]
+    form = UserSearchForm().validate_for_api()
+    command = ["/usr/local/bin/update_macaddress.sh", form.openvpn_user_info.data]
     command = ' '.join(str(d) for d in command)
     value = remote_server.onetime_shell(command)
-    print('%s' % value)
     if re.findall(r'已更新', value):
-        return Success(msg='MAC地址更新成功')
+        return Success(msg='MAC address updated successfully')
     else:
-        raise VirtualIPNotFound
+        # raise VirtualIPNotFound(msg='没有mac信息')
+        return NotFound(msg='No MAC information')
 
-# 根据vid注销用户信息
-@openvpn_api.route('/<vid>', methods=['DELETE'])
-@route_meta(auth='注销用户', module='用户')  # 将这个视图函数注册到权限管理容器中；auth的名称为"注销用户"模块名为"用户"
-# @group_required   # 只有在权限组授权后才可访问
-def delete_user(vid):
-    result = OpenVPNUser.remove_user(vid)
-    return Success(msg='注销用户成功')
 
-# 用户表查询
-@openvpn_api.route('/search', methods=['GET'])
-# @login_required
-def search():
-    form = UserSearchForm().validate_for_api()
-    users = OpenVPNUser.search_by_user(form.openvpn_user_info.data)
-    return jsonify(users)
+# 搜索用户信息
+@openvpn_api.route('/userinfosearch', methods=['GET'])
+@login_required
+def search_user():
+    form = HistoryInfoForm().validate_for_api()
+    keyword = request.args.get('keyword', default=None, type=str)
+    if keyword is None or '':
+        raise ParameterException(msg='搜索关键字不可为空')
+    start, count = paginate()
+    res = OpenVPNUser.query.filter(OpenVPNUser.nickname.like(f"%{keyword}%"))
+    if form.username.data:
+        # logs = logs.filter(Log.user_name == form.name.data)
+        res = OpenVPNUser.query.filter(OpenVPNUser.username == form.username.data)
+    if form.start.data and form.end.data:
+        res = res.filter(OpenVPNUser._create_time.between(form.start.data, form.end.data))
+    total = res.count()
+    res = res.order_by(text('create_time desc')).offset(start).limit(count).all()
+    total_page = math.ceil(total / count)
+    page = get_page_from_query()
+    if not res:
+        res = []
+    return json_res(page=page, count=count, total=total, items=res, total_page=total_page)
+
 
 # 根据用户查询IP
-@openvpn_api.route('/searchip', methods=['GET'])
+@openvpn_api.route('/searchip', methods=['GET', 'POST'])
+@login_required
 def get_user_ip():
     form = UserSearchForm().validate_for_api()
-    command = ["/usr/local/bin/get_user_ip.sh",form.openvpn_user_info.data]
+    command = ["/usr/local/bin/get_user_ip.sh", form.openvpn_user_info.data]
     command = ' '.join(str(d) for d in command)
     value = remote_server.onetime_shell(command)
-    # print('%s' % value)
-    # ip_pattern = r'(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)'
-    # matching = re.findall(ip_pattern, value)
-    if re.findall('未注册',value):
+    if re.findall('未注册', value):
         return ParameterException(msg='未注册')
+    elif re.findall('未登入', value):
+        return NotFound(msg='Never login')
     else:
-        # print('%s' % matching)
-        return value
+        return Success(msg=value)
+
 
 # 根据IP查询用户
-@openvpn_api.route('/searchuser', methods=['GET'])
+@openvpn_api.route('/searchuser', methods=['POST'])
 def get_ip_user():
     form = IPSearchForm().validate_for_api()
-    command = ["/usr/local/bin/get_user_ip.sh",form.openvpn_ip.data]
+    command = ["/usr/local/bin/get_user_ip.sh", form.openvpn_ip.data]
     command = ' '.join(str(d) for d in command)
     value = remote_server.onetime_shell(command)
     if re.findall('没有', value):
-        raise OpenVPNNotFound
+        raise ParameterException(msg='Unregistered')
     else:
-        return value
+        return Success(msg=value)
+
 
 # 绑定arp
 @openvpn_api.route('/arpbinding', methods=['POST'])
@@ -136,55 +157,117 @@ def arp_binding():
     remote_server.onetime_shell("/bin/bash /usr/local/bin/add_arp.sh")
     return Success(msg="arp绑定成功")
 
-# 查询所有历史信息
+
+# 查询所有历史信息(分页展示)
 @openvpn_api.route('/info', methods=['GET'])
-# @login_required
+@login_required
 def get_info():
-    info = OpenVPNLogInfo.get_all()
-    return jsonify(info)
+    # info = OpenVPNLogInfo.get_all()
+    # return jsonify(info)
+    start, count = paginate()
+    info = OpenVPNLogInfo.get_all(start, count)
+    total = OpenVPNLogInfo.get_total_nums()
+    total_page = math.ceil(total / count)
+    page = get_page_from_query()
+    return json_res(count=count, page=page, total=total, total_page=total_page, items=info)
 
-# 根据common_name查询历史信息
-@openvpn_api.route('/infousersearch', methods=['GET'])
-# @login_required
-def search_user_info():
-    form = InfoSearchForm().validate_for_api()
-    common_name = OpenVPNLogInfo.search_user_info(form.common_name.data)
-    return jsonify(common_name)
 
-# 根据ip查询历史信息
-@openvpn_api.route('/infoipsearch', methods=['GET'])
-# @login_required
-def search_ip_info():
-    form = IPSearchForm().validate_for_api()
-    ip = OpenVPNLogInfo.search_ip_info(form.openvpn_ip.data)
-    return jsonify(ip)
+# 搜索历史信息
+@openvpn_api.route('/infosearch', methods=['GET'])
+@login_required
+def search_info():
+    form = HistoryInfoForm().validate_for_api()
+    keyword = request.args.get('keyword', default=None, type=str)
+    if keyword is None or '':
+        raise ParameterException(msg='搜索关键字不可为空')
+    start, count = paginate()
+    # logs = Log.query.filter(Log.message.like(f'%{keyword}%'))
+    # res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name.like((f'%{keyword}%')))
+    res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.remote_ip.like(f"%{keyword}%"))
+    if form.name.data:
+        # logs = logs.filter(Log.user_name == form.name.data)
+        res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name == form.name.data)
+    if form.start.data and form.end.data:
+        res = res.filter(OpenVPNLogInfo.starting_time.between(form.start.data, form.end.data))
+    total = res.count()
+    res = res.order_by(text('starting_time desc')).offset(start).limit(count).all()
+    total_page = math.ceil(total / count)
+    page = get_page_from_query()
+    if not res:
+        res = []
+    return json_res(page=page, count=count, total=total, items=res, total_page=total_page)
+
 
 # 下载证书
-@openvpn_api.route('/download', methods=['GET'])
-# @login_required
+@openvpn_api.route('/download', methods=['GET', 'POST'])
+@login_required
 def download_cert():
-    form = CreateUserForm().validate_for_api()
-    filename = form.username.data
-    directory = os.path.abspath('/opt/vpnuser/')
-    response = make_response(send_from_directory(directory, filename, as_attachment=True))
-    response.headers["Content-Disposition"] = "attachment; filename={}".format(file_name.encode().decode('latin-1'))
-    return response
+    form = UserSearchForm().validate_for_api()
+    filename = form.openvpn_user_info.data + ".zip"
+    # directory = os.path.abspath('/opt/vpnuser/')
+    directory = os.path.abspath('/Users/xiaoyunjie/Downloads/CRT')
+    print("downlaod_path = ", directory)
+    if os.path.isdir(directory):
+        response = make_response(send_from_directory(directory, filename, as_attachment=True))
+        # response = send_from_directory(directory, filename, as_attachment=True)
+        print("response: ", response)
+        # response.headers["Access-Control-Expose-Headers"] = "Content-disposition"
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
+        response.headers["Content-Disposition"] = "attachment; filename={}".format(filename.encode().decode('latin-1'))
+        print("response_headers: ", response.headers)
+        if not response:
+            return NotFound(msg='File does not exist')
+        return response
+    return NotFound(msg='Directory does not exist')
 
-# 查看当前已连接客户端数量
-@openvpn_api.route('clientsconnected', methods=['GET'])
+
+# openvpn版本信息
+@openvpn_api.route('/openvpnversion', methods=['GET'])
+# @login_required
+def get_openvpn_version():
+    version = manager_info.collect_data_version("192.168.149.150", 11940)
+    # print(version)
+    return json_res(name=version)
+
+
+# 当前已连接客户端数量load-stats
+@openvpn_api.route('/clientsconnected', methods=['GET'])
 # @login_required
 def get_clients_connected():
-    pass
+    nclients = manager_info.collect_data_stats("192.168.149.150", 11940)
+    # print(nclients)
+    return json_res(nclients=nclients)
 
-# 查询已连接客户端信息
-@openvpn_api.route('clientslist', methods=['GET'])
+
+# 查询已连接客户端详细信息status 3
+@openvpn_api.route('/clientslist', methods=['GET'])
 # @login_required
 def get_clientslist():
-    pass
+    vpn_session = manager_info.collect_data_sessions("192.168.149.150", 11940)
+    # print(vpn_session)
+    return json_res(items=vpn_session)
+
+
+# 总访问量
+@openvpn_api.route('/totalvisits', methods=['GET'])
+# @login_required
+def get_totalvisits():
+    totalnumber = OpenVPNLogInfo.get_total_nums()
+    return jsonify(totalnumber)
+
+
+# 总用户数
+@openvpn_api.route('/totalusers', methods=['GET'])
+# @login_required
+def get_totalusers():
+    totalusers = OpenVPNUser.get_total_nums()
+    return jsonify(totalusers)
+
 
 # 断开用户连接
-@openvpn_api.route('closedclient', methods=['POST'])
+# @openvpn_api.route('/closedclient', methods=['POST'])
 # @login_required
-def closed_client():
-    pass
-
+# def closed_client():
+#     pass

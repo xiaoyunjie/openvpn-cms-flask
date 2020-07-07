@@ -22,7 +22,7 @@ class DevelopmentConfig(BaseConfig):
     """
     开发环境普通配置
     """
-    DEBUG = True
+    DEBUG = False
 
     # 令牌配置
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)

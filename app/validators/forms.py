@@ -175,3 +175,25 @@ class IPSearchForm(Form):
 
 class InfoSearchForm(Form):
     common_name = StringField(validators=[DataRequired(message='必须传入关键字')])
+
+# 历史信息按条件查询验证
+class HistoryInfoForm(Form):
+    # name可选，若无则表示全部
+    username = StringField(validators=[Optional()])
+    # 2018-11-01 09:39:35
+    start = DateTimeField(validators=[])
+    end = DateTimeField(validators=[])
+
+    def validate_start(self, value):
+        if value.data:
+            try:
+                _ = time.strptime(value.data, '%Y-%m-%d %H:%M:%S')
+            except ValueError as e:
+                raise e
+
+    def validate_end(self, value):
+        if value.data:
+            try:
+                _ = time.strptime(value.data, '%Y-%m-%d %H:%M:%S')
+            except ValueError as e:
+                raise e

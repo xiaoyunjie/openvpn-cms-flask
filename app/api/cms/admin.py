@@ -27,14 +27,14 @@ admin_api = Redprint('admin')
 
 
 @admin_api.route('/authority', methods=['GET'])
-@route_meta(auth='查询所有可分配的权限', module='管理员', mount=False)
+@route_meta(auth='查询所有可分配的权限', module='管理员', mount=True)
 @admin_required
 def authority():
     return jsonify(get_ep_infos())
 
 
 @admin_api.route('/users', methods=['GET'])
-@route_meta(auth='查询所有用户', module='管理员', mount=False)
+@route_meta(auth='查询所有用户', module='管理员', mount=True)
 @admin_required
 def get_admin_users():
     start, count = paginate()
@@ -68,7 +68,7 @@ def get_admin_users():
 
 
 @admin_api.route('/password/<int:uid>', methods=['PUT'])
-@route_meta(auth='修改用户密码', module='管理员', mount=False)
+@route_meta(auth='修改用户密码', module='管理员', mount=True)
 @admin_required
 def change_user_password(uid):
     form = ResetPasswordForm().validate_for_api()
@@ -84,7 +84,7 @@ def change_user_password(uid):
 
 
 @admin_api.route('/<int:uid>', methods=['DELETE'])
-@route_meta(auth='删除用户', module='管理员', mount=False)
+@route_meta(auth='删除用户', module='管理员', mount=True)
 @Logger(template='管理员删除了一个用户')  # 记录日志
 @admin_required
 def delete_user(uid):
@@ -98,7 +98,7 @@ def delete_user(uid):
 
 
 @admin_api.route('/<int:uid>', methods=['PUT'])
-@route_meta(auth='管理员更新用户信息', module='管理员', mount=False)
+@route_meta(auth='管理员更新用户信息', module='管理员', mount=True)
 @admin_required
 def update_user(uid):
     form = UpdateUserInfoForm().validate_for_api()
@@ -117,7 +117,7 @@ def update_user(uid):
 
 
 @admin_api.route('/disable/<int:uid>', methods=['PUT'])
-@route_meta(auth='禁用用户', module='管理员', mount=False)
+@route_meta(auth='禁用用户', module='管理员', mount=True)
 @admin_required
 def trans2disable(uid):
     _change_status(uid, 'active')
@@ -125,7 +125,7 @@ def trans2disable(uid):
 
 
 @admin_api.route('/active/<int:uid>', methods=['PUT'])
-@route_meta(auth='激活用户', module='管理员', mount=False)
+@route_meta(auth='激活用户', module='管理员', mount=True)
 @admin_required
 def trans2active(uid):
     _change_status(uid, 'disable')
@@ -133,7 +133,7 @@ def trans2active(uid):
 
 
 @admin_api.route('/groups', methods=['GET'])
-@route_meta(auth='查询所有权限组及其权限', module='管理员', mount=False)
+@route_meta(auth='查询所有权限组及其权限', module='管理员', mount=True)
 @admin_required
 def get_admin_groups():
     start, count = paginate()
@@ -160,7 +160,7 @@ def get_admin_groups():
 
 
 @admin_api.route('/group/all', methods=['GET'])
-@route_meta(auth='查询所有权限组', module='管理员', mount=False)
+@route_meta(auth='查询所有权限组', module='管理员', mount=True)
 @admin_required
 def get_all_group():
     groups = manager.group_model.get(one=False)
@@ -170,7 +170,7 @@ def get_all_group():
 
 
 @admin_api.route('/group/<int:gid>', methods=['GET'])
-@route_meta(auth='查询一个权限组及其权限', module='管理员', mount=False)
+@route_meta(auth='查询一个权限组及其权限', module='管理员', mount=True)
 @admin_required
 def get_group(gid):
     group = manager.group_model.get(id=gid, one=True, soft=False)
@@ -187,7 +187,7 @@ def get_group(gid):
 
 
 @admin_api.route('/group', methods=['POST'])
-@route_meta(auth='新建权限组', module='管理员', mount=False)
+@route_meta(auth='新建权限组', module='管理员', mount=True)
 @Logger(template='管理员新建了一个权限组')  # 记录日志
 @admin_required
 def create_group():
@@ -208,7 +208,7 @@ def create_group():
 
 
 @admin_api.route('/group/<int:gid>', methods=['PUT'])
-@route_meta(auth='更新一个权限组', module='管理员', mount=False)
+@route_meta(auth='更新一个权限组', module='管理员', mount=True)
 @admin_required
 def update_group(gid):
     form = UpdateGroup().validate_for_api()
@@ -220,7 +220,7 @@ def update_group(gid):
 
 
 @admin_api.route('/group/<int:gid>', methods=['DELETE'])
-@route_meta(auth='删除一个权限组', module='管理员', mount=False)
+@route_meta(auth='删除一个权限组', module='管理员', mount=True)
 @Logger(template='管理员删除一个权限组')  # 记录日志
 @admin_required
 def delete_group(gid):
@@ -236,7 +236,7 @@ def delete_group(gid):
 
 
 @admin_api.route('/dispatch', methods=['POST'])
-@route_meta(auth='分配单个权限', module='管理员', mount=False)
+@route_meta(auth='分配单个权限', module='管理员', mount=True)
 @admin_required
 def dispatch_auth():
     form = DispatchAuth().validate_for_api()
@@ -254,7 +254,7 @@ def dispatch_auth():
 
 
 @admin_api.route('/dispatch/patch', methods=['POST'])
-@route_meta(auth='分配多个权限', module='管理员', mount=False)
+@route_meta(auth='分配多个权限', module='管理员', mount=True)
 @admin_required
 def dispatch_auths():
     form = DispatchAuths().validate_for_api()
@@ -272,7 +272,7 @@ def dispatch_auths():
 
 
 @admin_api.route('/remove', methods=['POST'])
-@route_meta(auth='删除多个权限', module='管理员', mount=False)
+@route_meta(auth='删除多个权限', module='管理员', mount=True)
 @admin_required
 def remove_auths():
     form = RemoveAuths().validate_for_api()

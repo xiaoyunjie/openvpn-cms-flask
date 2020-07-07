@@ -9,10 +9,11 @@
 
 from lin.exception import NotFound, ParameterException
 from lin.interface import InfoCrud as Base
-from sqlalchemy import Column, String, Integer, or_, DateTime, Float,  func
+from sqlalchemy import Column, String, Integer, or_, DateTime, Float, func, desc
 # from flask_migrate import Migrate
-
+from datetime import datetime
 from app.libs.error_code import OpenVPNNotFound
+
 
 ##  新增用户入库
 class OpenVPNUser(Base):
@@ -22,6 +23,12 @@ class OpenVPNUser(Base):
     nickname = Column(String(30), nullable=False)
     summary = Column(String(1000))
 
+    # @property
+    # def time(self):
+    #     if self._create_time is None:
+    #         return None
+    #     return int(round(self._create_time.timestamp() * 1000))
+
     @classmethod
     def get_detail(cls, vid):
         User = cls.query.filter_by(id=vid, delete_time=None).first()
@@ -30,11 +37,20 @@ class OpenVPNUser(Base):
         return User
 
     @classmethod
-    def get_all(cls):
-        Users = cls.query.filter_by(delete_time=None).all()
+    def get_all(cls, start, count):
+        Users = cls.query.filter_by(delete_time=None).order_by(OpenVPNUser._create_time.desc()).offset(start).limit(
+            count).all()
         if not Users:
             raise NotFound(msg='没有找到相关用户')
         return Users
+
+    @classmethod
+    def get_total_nums(cls):
+        nums = cls.query.filter_by(delete_time=None).count()
+        if nums:
+            return nums
+        else:
+            return 0
 
     @classmethod
     def search_by_user(cls, openvpn_user_info):
@@ -70,14 +86,15 @@ class OpenVPNUser(Base):
         return True
 
     @classmethod
-    def delete_user(cls,form):
+    def delete_user(cls, form):
         User = cls.query.filter_by(username=form.username.data, delete_time=None).first()
         if User is None:
             raise NotFound(msg='没有找到相关用户')
         User.hard_delete(commit=True)
         return True
 
-## openvpn用户登入历史信息
+
+# openvpn用户登入历史信息
 class OpenVPNLogInfo(Base):
     __tablename__ = 'log'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -92,24 +109,41 @@ class OpenVPNLogInfo(Base):
     bytes_received = Column(Float, server_default='0', nullable=False)
     bytes_sent = Column(Float, server_default='0', nullable=False)
 
+    # @classmethod
+    # def get_all(cls):
+    #     Info = cls.query.filter_by(delete_time=None).all()
+    #     if not Info:
+    #         raise NotFound(msg='没有找到相关登入信息')
+    #     return Info
+
     @classmethod
-    def get_all(cls):
-        Info = cls.query.filter_by(delete_time=None).all()
+    def get_all(cls, start, count):
+        Info = cls.query.filter_by(delete_time=None).order_by(OpenVPNLogInfo.starting_time.desc()).offset(start).limit(
+            count).all()
         if not Info:
             raise NotFound(msg='没有找到相关登入信息')
         return Info
 
     @classmethod
+    def get_total_nums(cls):
+        nums = cls.query.filter_by(delete_time=None).count()
+        if nums:
+            return nums
+        else:
+            return 0
+
+    @classmethod
     def search_user_info(cls, user_info):
-        Users_Info = cls.query.filter_by(common_name == user_info, delete_time == None).all()
+        Users_Info = cls.query.filter_by(cls.ommon_name == user_info, cls.delete_time == None).all()
 
         if not Users_Info:
             raise OpenVPNNotFound
         return Users_Info
 
     @classmethod
-    def search_ip_info(cls,  ip_info):
-        IP_Info = cls.query.filter_by(or_(trusted_ip == ip_info, remote_ip == ip_info), delete_time == None).all()
+    def search_ip_info(cls, ip_info):
+        IP_Info = cls.query.filter_by(or_(cls.trusted_ip == ip_info, cls.remote_ip == ip_info),
+                                      cls.delete_time == None).all()
 
         if not IP_Info:
             raise OpenVPNNotFound

@@ -7,8 +7,8 @@ from app.app import create_app
 # from flask_migrate import Migrate
 import sqlalchemy
 
-app = create_app(environment='development')
-# app = create_app(environment='production')
+# app = create_app(environment='development')
+app = create_app(environment='production')
 
 # migrate = Migrate(app)
 
@@ -18,4 +18,4 @@ def lin_slogan():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="192.168.149.9")
