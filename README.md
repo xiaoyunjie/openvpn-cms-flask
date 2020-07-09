@@ -40,7 +40,7 @@ yum install
 
 ```sql
 mysql -u root -p
-create user 'root'@'%' identified by 'Gepoint';
+create user 'root'@'localhost' identified by 'Gepoint';
 create database openvpn;
 grant all on *.* to 'root'@'%';
 flush privileges;
@@ -48,7 +48,7 @@ exit
 ```
 
 ##### python36
-`yum install -y python36  python36-setuptools  python36-devel`
+`yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`
 
 `easy_install-3.6 pip`
 
@@ -69,6 +69,6 @@ EOF
 
 `source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
 
-`python start.py`
+`python3.6 start.py`
 
 http://localhost:5000
