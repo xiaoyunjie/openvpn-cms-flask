@@ -10,12 +10,11 @@ import os
 import re
 import sys
 import socket
-import json
+
 from datetime import datetime
 from ipaddress import ip_address
 from collections import deque
-from semantic_version import Version as semver
-from flask import jsonify
+
 
 try:
     import GeoIP

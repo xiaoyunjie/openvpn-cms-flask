@@ -200,7 +200,7 @@ def search_info():
 
 # 下载证书
 @openvpn_api.route('/download', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def download_cert():
     form = UserSearchForm().validate_for_api()
     filename = form.openvpn_user_info.data + ".zip"
@@ -225,7 +225,7 @@ def download_cert():
 
 # openvpn版本信息
 @openvpn_api.route('/openvpnversion', methods=['GET'])
-# @login_required
+@login_required
 def get_openvpn_version():
     version = manager_info.collect_data_version("192.168.149.150", 11940)
     # print(version)
@@ -234,7 +234,7 @@ def get_openvpn_version():
 
 # 当前已连接客户端数量load-stats
 @openvpn_api.route('/clientsconnected', methods=['GET'])
-# @login_required
+@login_required
 def get_clients_connected():
     nclients = manager_info.collect_data_stats("192.168.149.150", 11940)
     # print(nclients)
@@ -243,7 +243,7 @@ def get_clients_connected():
 
 # 查询已连接客户端详细信息status 3
 @openvpn_api.route('/clientslist', methods=['GET'])
-# @login_required
+@login_required
 def get_clientslist():
     vpn_session = manager_info.collect_data_sessions("192.168.149.150", 11940)
     # print(vpn_session)
@@ -252,7 +252,7 @@ def get_clientslist():
 
 # 总访问量
 @openvpn_api.route('/totalvisits', methods=['GET'])
-# @login_required
+@login_required
 def get_totalvisits():
     totalnumber = OpenVPNLogInfo.get_total_nums()
     return jsonify(totalnumber)
@@ -260,7 +260,7 @@ def get_totalvisits():
 
 # 总用户数
 @openvpn_api.route('/totalusers', methods=['GET'])
-# @login_required
+@login_required
 def get_totalusers():
     totalusers = OpenVPNUser.get_total_nums()
     return jsonify(totalusers)

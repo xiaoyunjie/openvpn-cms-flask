@@ -1,6 +1,6 @@
 
 ### 一、需求
-公司使用`openvpn`开源系统构建了一整套满足公司vpn需求的产品。2016年开始仅仅搭建了`openvpn`的裸服务端，通过简单的创建、删除和解绑脚本来维护系统。
+使用`openvpn`开源系统构建了一整套满足vpn需求的产品。一开始仅仅搭建了`openvpn`的裸服务端，通过简单的创建、删除和解绑脚本来维护系统。
 **痛点：**
 - 使用人员需要一定的Linux基础
 - 脚本操作容易出错，导致证书丢失
@@ -19,11 +19,56 @@
 **数据库：**`Mysql`
 **语言环境：**`Python`
 
-基于现有的开源框架Lin-cms二次开发，快速实现业务系统上线。
+基于开源框架Lin-cms二次开发，快速实现业务系统上线。
 
 
-### 三、安装
+### 三、安装部署
+#### openvpn
+yum install 
+
 #### CentOS 7
-`yum install python3-pip`
-`python -m venv venv`
-`pip install -r requirements.txt`
+- python 3.6+
+- mysql 5.6+
+- openvpn 2.4.7+
+
+##### 数据库
+`curl -O http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm`
+
+`rpm -ivh mysql-community-release-el7-5.noarch.rpm`
+
+`yum install -y epel-release   mysql-community-server`
+
+```sql
+mysql -u root -p
+create user 'root'@'%' identified by 'Gepoint';
+create database openvpn;
+grant all on *.* to 'root'@'%';
+flush privileges;
+exit
+```
+
+##### python36
+`yum install -y python36  python36-setuptools  python36-devel`
+
+`easy_install-3.6 pip`
+
+##### openvpn-cms-flask
+`git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git`
+
+`cd openvpn-cms-flask && python3.6 -m venv venv`
+
+```bash
+## 指定pip源，加速下载
+mkdir -p  /root/.pip/
+cat >  /root/.pip/pip.conf   <<EOF
+[global]
+trusted-host=mirrors.aliyun.com
+index-url=http://mirrors.aliyun.com/pypi/simple/
+EOF
+```
+
+`source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
+
+`python start.py`
+
+http://localhost:5000
