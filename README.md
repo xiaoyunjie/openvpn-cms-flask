@@ -1,4 +1,6 @@
+# openvpn-cms-flask
 
+---
 ### 一、需求
 使用`openvpn`开源系统构建了一整套满足vpn需求的产品。一开始仅仅搭建了`openvpn`的裸服务端，通过简单的创建、删除和解绑脚本来维护系统。
 **痛点：**
@@ -12,6 +14,7 @@
 
 `需要一套针对openvpn的内容管理系统，操作简单、维护方便、交互体验好、有日志查询、权限管控、开放API等功能，同时提供插件扩展。`
 
+---
 ### 二、选型设计
 经过筛选，选择前后端分离，全部通过API交互，方便后续前后端系统的重构。
 **前端选择：**`VUE`
@@ -21,11 +24,8 @@
 
 基于开源框架Lin-cms二次开发，快速实现业务系统上线。
 
-
-### 三、安装部署
-#### openvpn
-yum install 
-
+---
+### 三、CMS安装部署
 #### CentOS 7
 - python 3.6+
 - mysql 5.6+
@@ -72,3 +72,47 @@ EOF
 `python3.6 start.py`
 
 http://localhost:5000
+
+----
+###  openvpn部署
+- 对于`server.conf`  `vars`等脚本，建议根据自己的需求来修改
+```bash
+setenforce 0
+sed -i '/^SELINUX=/c\SELINUX=disabled' /etc/selinux/config
+yum install -y epel-release openvpn  easy-rsa  expect zip
+cp -r /usr/share/easy-rsa  /etc/openvpn/
+cp -r /opt/openvpn-cms-flask/app/scripts/vars /etc/openvpn/easy-rsa/3.0/
+cp /opt/openvpn-cms-flask/app/scripts/server.conf  /etc/openvpn/
+cp /opt/openvpn-cms-flask/app/scripts/cmd/* /usr/local/bin/
+cp /opt/openvpn-cms-flask/app/scripts/*.expect /etc/openvpn/easy-rsa/3.0/
+```
+
+##### 创建证书
+```bash
+cd /etc/openvpn/easy-rsa/3.0
+./easyrsa init-pki
+#创建ca，输入密码(两次),加上nopass则无需输入密码
+./easyrsa build-ca  nopass
+#生成 Diffie Hellman 参数
+./easyrsa gen-dh
+#创建服务端证书，重启openvpn服务也无需输入密码
+./easyrsa build-server-full openvpnserver nopass
+#创建ta.key
+openvpn --genkey --secret ta.key
+#证书注销验证
+./easyrsa gen-cr
+chmod 666 pki/crl.pem
+## 开启内核转发功能
+echo "net.ipv4.ip_forward = 1" > /etc/sysctl.conf
+sysctl -p
+#创建openvpn相关目录
+mkdir -p  /var/log/openvpn
+mkdir -p /opt/vpnuser
+mkdir -p /etc/openvpn/easy-rsa/3/pki/Epoint
+cp pki/ca.crt pki/Epoint/
+cp ta.key pki/Epoint/
+cp /opt/openvpn-cms-flask-master/app/scripts/client.ovpn pki/Epoint/
+#开启openvpn并设置开机启动
+systemctl start openvpn@server
+systemctl enable openvpn@server
+```

@@ -13,7 +13,7 @@ import paramiko
 class Cmd(object):
 
     def onetime_shell(self, cmd):
-        cmd = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        cmd = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         cmd = cmd.communicate()
         cmd = cmd[0].decode().rstrip()
         return cmd

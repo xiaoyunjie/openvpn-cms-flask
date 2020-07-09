@@ -1,0 +1,111 @@
+#!/bin/bash
+##Date:		2018-05-09
+##Author:	Browser
+##Description:	add or del vpnuser
+##Version:	1.0
+
+	num=$#
+	choose=$1
+	vpn_user=$2
+  
+help()
+  #帮助函数
+	{
+	echo '添加vpn用户执行命令: vpnuser add vpn用户名'
+	echo '删除vpn用户执行命令: vpnuser del vpn用户名'
+	}
+ 
+add_user()
+  #新建vpn用户函数
+{
+if [ -f /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt ];then
+	echo "==================<温馨提示>=================="
+	echo "VPN用户：$vpn_user已存在,请检查后操作!!"
+	echo "=============================================="
+else
+	cd /etc/openvpn/easy-rsa/3.0
+#	source ./vars &>/dev/null
+	./openvpn_user_create.expect $vpn_user &>/dev/null
+	mkdir -p /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user
+	cp /etc/openvpn/easy-rsa/3.0/pki/Epoint/client.ovpn  /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	echo "<ca>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+        cat /etc/openvpn/easy-rsa/3.0/pki/Epoint/ca.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+        echo "</ca>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	echo "<tls-auth>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+        cat /etc/openvpn/easy-rsa/3.0/pki/Epoint/ta.key >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+        echo "</tls-auth>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	echo "<cert>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	cat /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	echo "</cert>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	echo "<key>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	cat /etc/openvpn/easy-rsa/3.0/pki/private/$vpn_user.key >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	echo "</key>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+#	cp /etc/openvpn/easy-rsa/3.0/pki/Epoint/*  /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/	  
+#	echo "cert $vpn_user.crt">>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/client.ovpn
+#	echo "key $vpn_user.key">>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/client.ovpn
+	cd /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/
+	zip -r $vpn_user.zip $vpn_user &>/dev/null
+	mv $vpn_user.zip  /opt/vpnuser/
+	echo "=========================<成功提示>============================"
+	echo "VPN用户:$vpn_user创建成功!"
+#	rm -rf $vpn_user.c* $vpn_user.key ca.crt client.ovpn
+	echo "=========================<成功提示>============================"
+	echo "vpn用户: $vpn_user 密钥已生成在/opt/vpnuser 下，请自行获取！！！"
+	echo "==============================================================="
+fi
+}
+
+
+  del_user()
+  #删除vpn用户函数
+{
+if [ -f /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt ];then
+	cd /etc/openvpn/easy-rsa/3.0/
+#	source ./vars &>/dev/null
+#	/etc/openvpn/easy-rsa/3.0/easy-rsa revoke  $vpn_user &>/dev/null
+	./openvpn_user_delete.expect $vpn_user &>/dev/null
+	rm -rf /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt
+	rm -rf /etc/openvpn/easy-rsa/3.0/pki/private/$vpn_user.key
+	rm -rf /etc/openvpn/easy-rsa/3.0/pki/reqs/$vpn_user.req
+	rm -rf /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user
+	rm -rf /opt/vpnuser/$vpn_user.zip
+	./easyrsa gen-crl &>/dev/null
+	chmod 666 pki/crl.pem
+	systemctl restart openvpn@server.service
+	echo "=========================<成功提示>============================"
+	echo "注销并已删除vpn用户: $vpn_user成功"
+	echo "==============================================================="
+else
+	echo "==================<温馨提示>=================="
+	echo "注销失败: $vpn_user未注册"
+	echo "=============================================="
+fi
+}
+
+
+  main_vpn()
+  #主函数
+{
+if [ $num -ne 2 ];then
+	echo "=======================<错误提示>========================"
+	echo "输入参数无效,请检查!"
+	echo "=======================<帮助提示>========================"
+	help
+	echo "========================================================="
+ else
+	if [ $choose = "add" ];then
+		add_user
+	  elif [ $choose = "del" ];then
+		del_user
+	else
+	echo "=======================<错误提示>========================"
+	echo '输入参数类型无效,类型只包含add|del'
+	echo "=======================<帮助提示>========================"
+	help
+	echo "========================================================="
+	fi
+fi
+}
+
+####main######
+main_vpn

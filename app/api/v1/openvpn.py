@@ -16,7 +16,7 @@ from lin.exception import Success, ParameterException, NotFound
 from lin.redprint import Redprint
 from sqlalchemy import text
 
-from app.libs.shell import Remote_cmd
+from app.libs.shell import Remote_cmd, Cmd
 from app.libs.utils import get_page_from_query, json_res, paginate
 from app.models.openvpn import OpenVPNUser, OpenVPNLogInfo
 from app.validators.forms import UserSearchForm, CreateUserForm, IPSearchForm, HistoryInfoForm
@@ -24,7 +24,8 @@ from app.libs.manager_info import OpenvpnSocket
 
 openvpn_api = Redprint('openvpn')
 # 远程shell脚本执行
-remote_server = Remote_cmd('192.168.149.150', '22222', 'root', 'epointP@ssw0rd')
+# remote_server = Remote_cmd('192.168.149.150', '22222', 'root', 'epointP@ssw0rd')
+remote_server = Cmd()
 
 # openvpn后台manager信息抽取
 manager_info = OpenvpnSocket()

@@ -1,0 +1,19 @@
+#!/usr/bin/expect -f
+##Date:         2018-05-09
+##Author:       Browser
+##Description:  Delete the vpnuser certification
+##Version:      1.0
+
+
+if $argc<1 {
+	puts stderr "Usage: $argv0 need argv.\n"
+ 	exit 1
+ }
+ set vpnuser [lindex $argv 0]
+ set path /etc/openvpn/easy-rsa/3.0
+ 
+spawn $path/easyrsa revoke  $vpnuser
+ expect "Continue with revocation:"
+ send "yes\r"
+ expect eof
+ exit
