@@ -59,34 +59,9 @@ character_set_server=utf8mb4
 
 `systemctl enable mysqld`
 
-##### python36
-`yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`
-
-`easy_install-3.6 pip`
-
-##### openvpn-cms-flask
-`git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git`
-
-`cd openvpn-cms-flask && python3.6 -m venv venv`
-
-```bash
-## 指定pip源，加速下载
-mkdir -p  /root/.pip/
-cat >  /root/.pip/pip.conf   <<EOF
-[global]
-trusted-host=mirrors.aliyun.com
-index-url=http://mirrors.aliyun.com/pypi/simple/
-EOF
-```
-
-`source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
-
-`python3.6 start.py`
-
-http://localhost:5000
-
 ----
 ###  openvpn部署
+#### 配置文件
 - 对于`server.conf`  `vars`等脚本，建议根据自己的需求来修改
 ```bash
 setenforce 0
@@ -129,3 +104,56 @@ cp /opt/openvpn-cms-flask-master/app/scripts/client.ovpn pki/Epoint/
 systemctl start openvpn@server
 systemctl enable openvpn@server
 ```
+
+#### iptables配置
+```bash
+#停用firewalld，安装iptables
+systemctl stop firewalld
+systemctl disable firewalld
+yum install iptables iptables-services
+systemctl start iptables
+systemctl enable iptables
+# 开通系统和数据库端口
+iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 8000 -j ACCEPT
+iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 5000 -j ACCEPT
+iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+# 放通11940的tcp和udp端口
+iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 1194 -j ACCEPT
+iptables -I INPUT 6 -p udp -m state --state NEW -m udp --dport 1194 -j ACCEPT
+# 如果要在内网看到客户端的ip，则配置转发，否则配置nat，配置forward，需要在核心添加路由
+iptables -I FORWARD 1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -I FORWARD 2 -s 172.28.16.0/20 -d 192.168.0.0/16 -j ACCEPT
+# 配置nat转发
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# 保存iptables配置
+service iptables save
+# 重新加载iptables配置文件
+service iptables restart
+```
+
+---
+##### python36
+`yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`
+
+`easy_install-3.6 pip`
+
+##### openvpn-cms-flask
+`git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git`
+
+`cd openvpn-cms-flask && python3.6 -m venv venv`
+
+```bash
+## 指定pip源，加速下载
+mkdir -p  /root/.pip/
+cat >  /root/.pip/pip.conf   <<EOF
+[global]
+trusted-host=mirrors.aliyun.com
+index-url=http://mirrors.aliyun.com/pypi/simple/
+EOF
+```
+
+`source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
+
+`python3.6 start.py`
+
+http://localhost:5000
