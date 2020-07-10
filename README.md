@@ -175,7 +175,9 @@ EOF
 
 新增超级账户
 
-``
+`python add_super.py` （ super 123456）
+
+启动服务
 `python3.6 start.py`
 
 http://localhost:5000
