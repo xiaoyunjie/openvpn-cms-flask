@@ -3,6 +3,7 @@
 ---
 ### 一、需求
 使用`openvpn`开源系统构建了一整套满足vpn需求的产品。一开始仅仅搭建了`openvpn`的裸服务端，通过简单的创建、删除和解绑脚本来维护系统。
+
 **痛点：**
 - 使用人员需要一定的Linux基础
 - 脚本操作容易出错，导致证书丢失
@@ -17,16 +18,31 @@
 ---
 ### 二、选型设计
 经过筛选，选择前后端分离，全部通过API交互，方便后续前后端系统的重构。
-**前端选择：**`VUE`
-**后端选择：**`FLASK`
-**数据库：**`Mysql`
-**语言环境：**`Python`
 
-基于开源框架Lin-cms二次开发，快速实现业务系统上线。
+**前端选择：** `VUE`
+
+**后端选择：** `FLASK`
+
+**数据库：** `Mysql`
+
+**语言环境：** `Python`
+
+
+>基于开源框架Lin-cms二次开发，快速实现业务系统上线。
+
+VPN概览
+![images](images/openvpn-1.png)
+
+VPN列表
+![images](images/openvpn-2.png)
+
+VPN历史信息
+![images](images/openvpn-3.png)
+
 
 ---
-### 三、CMS安装部署
-#### CentOS 7
+### 三、环境部署
+##### CentOS 7
 - python 3.6+
 - mysql 5.6+
 - openvpn 2.4.7+
@@ -60,7 +76,7 @@ character_set_server=utf8mb4
 `systemctl enable mysqld`
 
 ----
-###  openvpn部署
+###  四、openvpn部署
 #### 配置文件
 - 对于`server.conf`  `vars`等脚本，建议根据自己的需求来修改
 ```bash
@@ -132,6 +148,8 @@ service iptables restart
 ```
 
 ---
+### CMS部署
+
 ##### python36
 `yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`
 
@@ -151,9 +169,13 @@ trusted-host=mirrors.aliyun.com
 index-url=http://mirrors.aliyun.com/pypi/simple/
 EOF
 ```
+依赖安装
 
 `source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
 
+新增超级账户
+
+``
 `python3.6 start.py`
 
 http://localhost:5000
