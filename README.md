@@ -41,11 +41,23 @@
 ```sql
 mysql -u root -p
 create user 'root'@'localhost' identified by 'Gepoint';
-create database openvpn;
+create database  openvpn default character set utf8mb4 collate utf8mb4_unicode_ci;
 grant all on *.* to 'root'@'%';
 flush privileges;
 exit
 ```
+建议修改mysql的字符集
+```bash
+[mysqld]
+character_set_server=utf8mb4
+```
+**启动mysql**
+
+`systemctl start mysqld`
+
+**开机启动mysql**
+
+`systemctl enable mysqld`
 
 ##### python36
 `yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`

@@ -38,7 +38,6 @@ manager_info = OpenvpnSocket()
 def create_user():
     form = CreateUserForm().validate_for_api()
     result = OpenVPNUser.new_user(form)
-    # print('%s' % result)
     if result is True:
         command = ["/usr/local/bin/vpnuser", "add", form.username.data]
         command = ' '.join(str(d) for d in command)
@@ -60,7 +59,6 @@ def get_user(vid):
 def get_users():
     start, count = paginate()
     users = OpenVPNUser.get_all(start, count)
-    # users = OpenVPNUser.query.filter(OpenVPNUser.time)
     total = OpenVPNUser.get_total_nums()
     total_page = math.ceil(total / count)
     page = get_page_from_query()
@@ -85,8 +83,6 @@ def delete_openvpnuser():
 @openvpn_api.route('/update', methods=['POST'])
 @login_required  # 只有在登入后后才可访问
 def update_mac():
-    # form = IPSearchForm().validate_for_api()
-    # command = ["/usr/local/bin/update_user_mac.sh", form.openvpn_ip.data]
     form = UserSearchForm().validate_for_api()
     command = ["/usr/local/bin/update_macaddress.sh", form.openvpn_user_info.data]
     command = ' '.join(str(d) for d in command)
@@ -94,7 +90,6 @@ def update_mac():
     if re.findall(r'已更新', value):
         return Success(msg='MAC address updated successfully')
     else:
-        # raise VirtualIPNotFound(msg='没有mac信息')
         return NotFound(msg='No MAC information')
 
 
@@ -109,7 +104,6 @@ def search_user():
     start, count = paginate()
     res = OpenVPNUser.query.filter(OpenVPNUser.nickname.like(f"%{keyword}%"))
     if form.username.data:
-        # logs = logs.filter(Log.user_name == form.name.data)
         res = OpenVPNUser.query.filter(OpenVPNUser.username == form.username.data)
     if form.start.data and form.end.data:
         res = res.filter(OpenVPNUser._create_time.between(form.start.data, form.end.data))
@@ -163,8 +157,6 @@ def arp_binding():
 @openvpn_api.route('/info', methods=['GET'])
 @login_required
 def get_info():
-    # info = OpenVPNLogInfo.get_all()
-    # return jsonify(info)
     start, count = paginate()
     info = OpenVPNLogInfo.get_all(start, count)
     total = OpenVPNLogInfo.get_total_nums()
@@ -186,7 +178,6 @@ def search_info():
     # res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name.like((f'%{keyword}%')))
     res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.remote_ip.like(f"%{keyword}%"))
     if form.name.data:
-        # logs = logs.filter(Log.user_name == form.name.data)
         res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name == form.name.data)
     if form.start.data and form.end.data:
         res = res.filter(OpenVPNLogInfo.starting_time.between(form.start.data, form.end.data))
@@ -200,21 +191,19 @@ def search_info():
 
 
 # 下载证书
-@openvpn_api.route('/download', methods=['GET', 'POST'])
+@openvpn_api.route('/download', methods=['GET'])
 # @login_required
 def download_cert():
     form = UserSearchForm().validate_for_api()
     filename = form.openvpn_user_info.data + ".zip"
-    # directory = os.path.abspath('/opt/vpnuser/')
-    directory = os.path.abspath('/Users/xiaoyunjie/Downloads/CRT')
+    directory = os.path.abspath('/opt/vpnuser/')
+    # directory = os.path.abspath('/Users/xiaoyunjie/Downloads/CRT')
     print("downlaod_path = ", directory)
     if os.path.isdir(directory):
         response = make_response(send_from_directory(directory, filename, as_attachment=True))
-        # response = send_from_directory(directory, filename, as_attachment=True)
         print("response: ", response)
-        # response.headers["Access-Control-Expose-Headers"] = "Content-disposition"
         response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Methods'] = 'GET'
         response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
         response.headers["Content-Disposition"] = "attachment; filename={}".format(filename.encode().decode('latin-1'))
         print("response_headers: ", response.headers)
@@ -247,7 +236,6 @@ def get_clients_connected():
 @login_required
 def get_clientslist():
     vpn_session = manager_info.collect_data_sessions("192.168.149.150", 11940)
-    # print(vpn_session)
     return json_res(items=vpn_session)
 
 
