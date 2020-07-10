@@ -179,3 +179,6 @@ EOF
 `python3.6 start.py`
 
 http://localhost:5000
+
+### API接口
+https://easydoc.xyz/doc/82789167/iBTVBVhE/CGQNK5YF
