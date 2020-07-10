@@ -123,6 +123,7 @@ mkdir -p /opt/vpnuser
 mkdir -p /etc/openvpn/easy-rsa/3/pki/Epoint
 cp pki/ca.crt pki/Epoint/
 cp ta.key pki/Epoint/
+# client.ovpn 中的remote地址根据自己实际地址或域名来修改
 cp /opt/openvpn-cms-flask-master/app/scripts/client.ovpn pki/Epoint/
 #开启openvpn并设置开机启动
 systemctl start openvpn@server
