@@ -187,3 +187,9 @@ service iptables restart
 
 ### 六、API接口
 https://easydoc.xyz/doc/82789167/iBTVBVhE/CGQNK5YF
+
+---
+
+### 七、Feature
+- 新增地图功能，将在线用户显示在地图上
+- 新增在线踢出用户下线功能
