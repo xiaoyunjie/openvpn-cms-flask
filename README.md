@@ -75,8 +75,44 @@ character_set_server=utf8mb4
 
 `systemctl enable mysqld`
 
+
+---
+### 四、CMS部署
+
+##### python36
+`yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`
+
+`easy_install-3.6 pip`
+
+##### openvpn-cms-flask
+`git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git`
+
+`cd openvpn-cms-flask && python3.6 -m venv venv`
+
+```bash
+## 指定pip源，加速下载
+mkdir -p  /root/.pip/
+cat >  /root/.pip/pip.conf   <<EOF
+[global]
+trusted-host=mirrors.aliyun.com
+index-url=http://mirrors.aliyun.com/pypi/simple/
+EOF
+```
+依赖安装
+
+`source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
+
+新增超级账户
+
+`python add_super.py` （ super 123456）
+
+启动服务
+`python3.6 start.py`
+
+http://localhost:5000
+
 ----
-###  四、openvpn部署
+###  五、openvpn部署
 #### 配置文件
 - 对于`server.conf`  `vars`等脚本，建议根据自己的需求来修改
 ```bash
@@ -134,8 +170,8 @@ iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 8000 -j ACCEPT
 iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 5000 -j ACCEPT
 iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
 # 放通11940的tcp和udp端口
-iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 1194 -j ACCEPT
-iptables -I INPUT 6 -p udp -m state --state NEW -m udp --dport 1194 -j ACCEPT
+iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 11940 -j ACCEPT
+iptables -I INPUT 6 -p udp -m state --state NEW -m udp --dport 11940 -j ACCEPT
 # 如果要在内网看到客户端的ip，则配置转发，否则配置nat，配置forward，需要在核心添加路由
 iptables -I FORWARD 1 -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -I FORWARD 2 -s 172.28.16.0/20 -d 192.168.0.0/16 -j ACCEPT
@@ -148,39 +184,6 @@ service iptables restart
 ```
 
 ---
-### CMS部署
 
-##### python36
-`yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`
-
-`easy_install-3.6 pip`
-
-##### openvpn-cms-flask
-`git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git`
-
-`cd openvpn-cms-flask && python3.6 -m venv venv`
-
-```bash
-## 指定pip源，加速下载
-mkdir -p  /root/.pip/
-cat >  /root/.pip/pip.conf   <<EOF
-[global]
-trusted-host=mirrors.aliyun.com
-index-url=http://mirrors.aliyun.com/pypi/simple/
-EOF
-```
-依赖安装
-
-`source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
-
-新增超级账户
-
-`python add_super.py` （ super 123456）
-
-启动服务
-`python3.6 start.py`
-
-http://localhost:5000
-
-### API接口
+### 六、API接口
 https://easydoc.xyz/doc/82789167/iBTVBVhE/CGQNK5YF
