@@ -18,7 +18,7 @@ Lin-CMS==0.2.0b2
 MarkupSafe==1.1.1
 pipfile==0.0.2
 PyJWT==1.7.1
-requests==2.18.4
+requests==2.20.0
 six==1.12.0
 SQLAlchemy==1.2.11
 toml==0.10.0
