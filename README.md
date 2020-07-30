@@ -157,6 +157,10 @@ cp /opt/openvpn-cms-flask-master/app/scripts/client.ovpn pki/Epoint/
 #开启openvpn并设置开机启动
 systemctl start openvpn@server
 systemctl enable openvpn@server
+# 每天凌晨重启，重新加载crl.pem
+crontab -l > /var/tmp/tmp.cron
+echo "0 0 * * *  systemctl restart openvpn@server" >> /var/tmp/tmp.cron
+crontab /var/tmp/tmp.cron
 ```
 
 #### iptables配置
