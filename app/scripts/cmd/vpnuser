@@ -71,7 +71,7 @@ if [ -f /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt ];then
 	rm -rf /opt/vpnuser/$vpn_user.zip
 	./easyrsa gen-crl &>/dev/null
 	chmod 666 pki/crl.pem
-	systemctl restart openvpn@server.service
+	#systemctl restart openvpn@server.service
 	echo "=========================<成功提示>============================"
 	echo "注销并已删除vpn用户: $vpn_user成功"
 	echo "==============================================================="
