@@ -161,20 +161,26 @@ class CreateOrUpdateBookForm(Form):
     summary = StringField(validators=[DataRequired(message='必须传入图书综述')])
     image = StringField(validators=[DataRequired(message='必须传入图书插图')])
 
+
 class UserSearchForm(Form):
-    openvpn_user_info= StringField(validators=[DataRequired(message='必须传入关键字')])
+    openvpn_user_info = StringField(validators=[DataRequired(message='必须传入关键字')])
+
 
 class CreateUserForm(Form):
-    username = StringField(validators=[DataRequired(message='必须传入用户名'),length(min=1, max=20, message='用户名长度必须在1~20之间')])
+    username = StringField(
+        validators=[DataRequired(message='必须传入用户名'), length(min=1, max=20, message='用户名长度必须在1~20之间')])
     # nickname = StringField(validators=[DataRequired(message='必须传入姓名昵称'),length(min=2, max=20, message='用户名长度必须在2~20之间')])
     nickname = StringField(validators=[length(max=20, message='用户名长度不能超过20')])
-    summary = StringField(validators=[length(max=1000,message='备注信息不能超过1000')])
+    summary = StringField(validators=[length(max=1000, message='备注信息不能超过1000')])
+
 
 class IPSearchForm(Form):
     openvpn_ip = StringField(validators=[DataRequired(message='必须传入IP地址'), IPAddress(message='请输入正确的IP地址')])
 
+
 class InfoSearchForm(Form):
     common_name = StringField(validators=[DataRequired(message='必须传入关键字')])
+
 
 # 历史信息按条件查询验证
 class HistoryInfoForm(Form):
