@@ -177,8 +177,8 @@ def search_info():
     # logs = Log.query.filter(Log.message.like(f'%{keyword}%'))
     # res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name.like((f'%{keyword}%')))
     res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.remote_ip.like(f"%{keyword}%"))
-    if form.name.data:
-        res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name == form.name.data)
+    if form.username.data:
+        res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name == form.username.data)
     if form.start.data and form.end.data:
         res = res.filter(OpenVPNLogInfo.starting_time.between(form.start.data, form.end.data))
     total = res.count()
