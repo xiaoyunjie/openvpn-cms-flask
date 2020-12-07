@@ -17,7 +17,7 @@ def main():
             user = User()
             user.username = 'super'
             user.password = '123456'
-            user.email = '1234995678@qq.com'
+            user.email = 'hello_openvpn@163.com'
             # admin 2 的时候为超级管理员，普通用户为 1
             user.admin = 2
             db.session.add(user)
