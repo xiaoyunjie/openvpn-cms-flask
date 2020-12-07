@@ -100,18 +100,19 @@ trusted-host=mirrors.aliyun.com
 index-url=http://mirrors.aliyun.com/pypi/simple/
 EOF
 ```
-依赖安装
+
+##### 依赖安装
 
 `source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
 
-新增超级账户
+##### 新增超级账户
 
 `python add_super.py` （ super 123456）
 
-修改配置项
+##### 修改配置项
 `vi openvpn-cms-flask/app/__init__.py` 修改地址和端口，地址为部署vpn的地址，端口使用11940
 
-启动服务
+##### 启动服务
 `python3.6 start.py`
 
 http://localhost:5000
