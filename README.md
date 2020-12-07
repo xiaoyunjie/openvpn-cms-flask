@@ -108,6 +108,9 @@ EOF
 
 `python add_super.py` （ super 123456）
 
+修改配置项
+`vi openvpn-cms-flask/app/__init__.py` 修改地址和端口，地址为部署vpn的地址，端口使用11940
+
 启动服务
 `python3.6 start.py`
 
