@@ -58,7 +58,7 @@ VPN历史信息
 
 ```sql
 mysql -u root -p
-create user 'root'@'localhost' identified by 'Gepoint';
+create user 'root'@'localhost' identified by 'openvpn';
 create database  openvpn default character set utf8mb4 collate utf8mb4_unicode_ci;
 grant all on *.* to 'root'@'%';
 flush privileges;
