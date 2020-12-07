@@ -21,6 +21,7 @@ from app.libs.utils import get_page_from_query, json_res, paginate
 from app.models.openvpn import OpenVPNUser, OpenVPNLogInfo
 from app.validators.forms import UserSearchForm, CreateUserForm, IPSearchForm, HistoryInfoForm
 from app.libs.manager_info import OpenvpnSocket
+from app import VPN_ADDRESS, VPN_PORT
 
 openvpn_api = Redprint('openvpn')
 # 远程shell脚本执行
@@ -217,7 +218,7 @@ def download_cert():
 @openvpn_api.route('/openvpnversion', methods=['GET'])
 @login_required
 def get_openvpn_version():
-    version = manager_info.collect_data_version("192.168.149.150", 11940)
+    version = manager_info.collect_data_version(VPN_ADDRESS, VPN_PORT)
     # print(version)
     return json_res(name=version)
 
@@ -226,7 +227,7 @@ def get_openvpn_version():
 @openvpn_api.route('/clientsconnected', methods=['GET'])
 @login_required
 def get_clients_connected():
-    nclients = manager_info.collect_data_stats("192.168.149.150", 11940)
+    nclients = manager_info.collect_data_stats(VPN_ADDRESS, VPN_PORT)
     # print(nclients)
     return json_res(nclients=nclients)
 
@@ -235,7 +236,7 @@ def get_clients_connected():
 @openvpn_api.route('/clientslist', methods=['GET'])
 @login_required
 def get_clientslist():
-    vpn_session = manager_info.collect_data_sessions("192.168.149.150", 11940)
+    vpn_session = manager_info.collect_data_sessions(VPN_ADDRESS, VPN_PORT)
     return json_res(items=vpn_session)
 
 
