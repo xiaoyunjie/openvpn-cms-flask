@@ -6,7 +6,7 @@
 
 DB='openvpn'
 DBADMIN='root'
-PASSWD='Gepoint'
+PASSWD='openvpn'
 HOST='127.0.0.1'
 #LOG='/var/log/openvpn/openvpn.log'
 MYSQL='/usr/bin/mysql'
