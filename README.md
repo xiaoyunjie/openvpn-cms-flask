@@ -207,3 +207,8 @@ https://easydoc.xyz/doc/82789167/iBTVBVhE/CGQNK5YF
 - 新增在线踢出用户下线功能
 
 ## 如果此系统对你有所帮助，请Start一波！！
+
+## 欢迎交流
+添加微信
+
+![images](images/微信二维码.jpeg)
