@@ -199,7 +199,7 @@ def download_cert():
     filename = form.openvpn_user_info.data + ".zip"
     directory = os.path.abspath('/opt/vpnuser/')
     # directory = os.path.abspath('/Users/xiaoyunjie/Downloads/CRT')
-    print("downlaod_path = ", directory)
+    # print("download_path = ", directory)
     if os.path.isdir(directory):
         response = make_response(send_from_directory(directory, filename, as_attachment=True))
         print("response: ", response)
