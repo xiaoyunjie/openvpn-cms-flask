@@ -113,7 +113,7 @@ EOF
 `vi openvpn-cms-flask/app/__init__.py` 修改地址和端口，地址为部署vpn的地址，端口使用11940
 
 ##### 启动服务
-`python3.6 start.py`
+`python3.6 starter.py`
 
 http://localhost:5000
 
@@ -145,7 +145,7 @@ cd /etc/openvpn/easy-rsa/3.0
 #创建ta.key
 openvpn --genkey --secret ta.key
 #证书注销验证
-./easyrsa gen-cr
+./easyrsa gen-crl
 chmod 666 pki/crl.pem
 ## 开启内核转发功能
 echo "net.ipv4.ip_forward = 1" > /etc/sysctl.conf
@@ -157,7 +157,7 @@ mkdir -p /etc/openvpn/easy-rsa/3/pki/Epoint
 cp pki/ca.crt pki/Epoint/
 cp ta.key pki/Epoint/
 # client.ovpn 中的remote地址根据自己实际地址或域名来修改
-cp /opt/openvpn-cms-flask-master/app/scripts/client.ovpn pki/Epoint/
+cp /opt/openvpn-cms-flask/app/scripts/client.ovpn pki/Epoint/
 #开启openvpn并设置开机启动
 systemctl start openvpn@server
 systemctl enable openvpn@server
