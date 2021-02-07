@@ -63,6 +63,7 @@ mysql -u root -p
 create user 'root'@'localhost' identified by 'openvpn';
 create database  openvpn default character set utf8mb4 collate utf8mb4_unicode_ci;
 grant all on *.* to 'root'@'%';
+create database openvpn;
 flush privileges;
 exit
 ```
@@ -98,8 +99,9 @@ character_set_server=utf8mb4
 mkdir -p  /root/.pip/
 cat >  /root/.pip/pip.conf   <<EOF
 [global]
-trusted-host=mirrors.aliyun.com
-index-url=http://mirrors.aliyun.com/pypi/simple/
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+[install]
+trusted-host=pypi.tuna.tsinghua.edu.cn
 EOF
 ```
 
@@ -187,7 +189,7 @@ iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 11940 -j ACCEPT
 iptables -I INPUT 6 -p udp -m state --state NEW -m udp --dport 11940 -j ACCEPT
 # 如果要在内网看到客户端的ip，则配置转发，否则配置nat，配置forward，需要在核心添加路由
 iptables -I FORWARD 1 -m state --state RELATED,ESTABLISHED -j ACCEPT
-iptables -I FORWARD 2 -s 172.28.16.0/20 -d 192.168.0.0/16 -j ACCEPT
+iptables -I FORWARD 2 -s 172.16.64.0/20 -d 192.168.0.0/16 -j ACCEPT
 # 配置nat转发
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 # 保存iptables配置
