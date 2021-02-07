@@ -90,7 +90,7 @@ character_set_server=utf8mb4
 `easy_install-3.6 pip`
 
 ##### openvpn-cms-flask
-`git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git`
+`git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git  openvpn-cms-flask`
 
 `cd openvpn-cms-flask && python3.6 -m venv venv`
 

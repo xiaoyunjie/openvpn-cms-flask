@@ -14,9 +14,9 @@ else
   ps aux | egrep 'starter' | grep -v grep | awk '{ print \$2 }' | xargs kill -9
 fi
 
-source /opt/openvpn-cms-flask-master/venv/bin/activate
+source /opt/openvpn-cms-flask/venv/bin/activate
 
-cd /opt/openvpn-cms-flask-master && python starter.py >>/var/log/openvpn-cms-flask.log   2>&1  &
+cd /opt/openvpn-cms-flask && python starter.py >>/var/log/openvpn-cms-flask.log   2>&1  &
 
 exit 0
 EOF
