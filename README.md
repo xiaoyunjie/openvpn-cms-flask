@@ -32,7 +32,7 @@
 **语言环境：** `Python`
 
 
->基于开源框架Lin-cms二次开发，快速实现业务系统上线。
+>基于开源框架Lin-cms二次开发
 
 VPN概览
 ![images](images/openvpn-1.png)
