@@ -67,6 +67,8 @@ create database openvpn;
 flush privileges;
 exit
 ```
+**如果更改了MySQL的密码，还需要将 /opt/openvpn-cms-flask/app/scripts/cmd/ 中 connect.sh和disconnect.sh 中的密码改掉**
+
 建议修改mysql的字符集
 ```bash
 [mysqld]
@@ -132,7 +134,7 @@ yum install -y epel-release openvpn  easy-rsa  expect zip
 cp -r /usr/share/easy-rsa  /etc/openvpn/
 cp -r /opt/openvpn-cms-flask/app/scripts/vars /etc/openvpn/easy-rsa/3.0/
 cp /opt/openvpn-cms-flask/app/scripts/server.conf  /etc/openvpn/
-cp /opt/openvpn-cms-flask/app/scripts/cmd/* /usr/local/bin/
+cp /opt/openvpn-cms-flask/app/scripts/cmd/* /usr/local/bin/ && chmod 755 -R /usr/local/bin/
 cp /opt/openvpn-cms-flask/app/scripts/*.expect /etc/openvpn/easy-rsa/3.0/
 ```
 
