@@ -7,7 +7,7 @@ chardet==3.0.4
 Click==7.0
 cymysql==0.9.13
 Flask==1.0.2
-Flask-Cors==2.1.0
+Flask-Cors==3.0.9
 Flask-JWT-Extended==3.12.1
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
