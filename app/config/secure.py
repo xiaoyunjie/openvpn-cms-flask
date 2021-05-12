@@ -11,7 +11,6 @@ class DevelopmentSecure(BaseConfig):
     """
     开发环境安全性配置
     """
-    # SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:openvpn@192.168.149.150:3306/openvpn'
     SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:openvpn@localhost:3306/openvpn'
 
     SQLALCHEMY_ECHO = False
@@ -26,7 +25,6 @@ class ProductionSecure(BaseConfig):
     """
     生产环境安全性配置
     """
-    # SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:openvpn@192.168.149.150:3306/openvpn'
     SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:openvpn@localhost:3306/openvpn'
 
     SQLALCHEMY_ECHO = False
