@@ -12,6 +12,7 @@ app = create_app(environment='production')
 
 # migrate = Migrate(app)
 
+
 @app.route('/', methods=['GET'], strict_slashes=False)
 def lin_slogan():
     return """<h1>OPENVPN<h1>"""

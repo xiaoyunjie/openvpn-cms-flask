@@ -47,6 +47,9 @@ class ProductionConfig(BaseConfig):
     # 令牌配置
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
 
+    # 指定访问api服务的url, 用于本地文件上传
+    SITE_DOMAIN = "http://192.168.1.1:5000"
+
     # 插件模块暂时没有开启，以下配置可忽略
     # plugin config写在字典里面
     PLUGIN_PATH = {
