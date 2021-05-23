@@ -118,6 +118,8 @@ EOF
 ##### 修改配置项
 `vi openvpn-cms-flask/app/__init__.py` 修改地址和端口，地址为部署vpn的地址，端口使用11940
 
+`vi openvpn-cms-flask/app/config/setting.py` 修改 SITE_DOMAIN，指定访问api服务的url, 用于本地文件上传，域名或IP地址
+
 ##### 启动服务
 `python3.6 starter.py`
 
