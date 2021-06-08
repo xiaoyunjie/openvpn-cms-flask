@@ -21,11 +21,9 @@ from app.libs.utils import get_page_from_query, json_res, paginate
 from app.models.openvpn import OpenVPNUser, OpenVPNLogInfo
 from app.validators.forms import UserSearchForm, CreateUserForm, IPSearchForm, HistoryInfoForm
 from app.libs.manager_info import OpenvpnSocket
-from app import VPN_ADDRESS, VPN_PORT
+from app.config.secure import VPN_ADDRESS, VPN_PORT
 
 openvpn_api = Redprint('openvpn')
-# 远程shell脚本执行
-# remote_server = Remote_cmd('192.168.149.150', '22222', 'root', 'epointP@ssw0rd')
 remote_server = Cmd()
 
 # openvpn后台manager信息抽取
@@ -175,8 +173,6 @@ def search_info():
     if keyword is None or '':
         raise ParameterException(msg='搜索关键字不可为空')
     start, count = paginate()
-    # logs = Log.query.filter(Log.message.like(f'%{keyword}%'))
-    # res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name.like((f'%{keyword}%')))
     res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.remote_ip.like(f"%{keyword}%"))
     if form.username.data:
         res = OpenVPNLogInfo.query.filter(OpenVPNLogInfo.common_name == form.username.data)
@@ -193,13 +189,10 @@ def search_info():
 
 # 下载证书
 @openvpn_api.route('/download', methods=['GET'])
-# @login_required
 def download_cert():
     form = UserSearchForm().validate_for_api()
     filename = form.openvpn_user_info.data + ".zip"
     directory = os.path.abspath('/opt/vpnuser/')
-    # directory = os.path.abspath('/Users/xiaoyunjie/Downloads/CRT')
-    # print("download_path = ", directory)
     if os.path.isdir(directory):
         response = make_response(send_from_directory(directory, filename, as_attachment=True))
         print("response: ", response)
@@ -219,7 +212,6 @@ def download_cert():
 @login_required
 def get_openvpn_version():
     version = manager_info.collect_data_version(VPN_ADDRESS, VPN_PORT)
-    # print(version)
     return json_res(name=version)
 
 
@@ -228,7 +220,6 @@ def get_openvpn_version():
 @login_required
 def get_clients_connected():
     nclients = manager_info.collect_data_stats(VPN_ADDRESS, VPN_PORT)
-    # print(nclients)
     return json_res(nclients=nclients)
 
 
