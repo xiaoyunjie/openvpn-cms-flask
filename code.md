@@ -34,6 +34,3 @@
 
 20000 werkzeug 中的HTTP EXCEPTION，error_code统一为1007，前端应读取msg
 
-## 项目使用的状态码
-
-80010 图书未找到
