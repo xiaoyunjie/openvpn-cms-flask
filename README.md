@@ -161,11 +161,11 @@ sysctl -p
 #创建openvpn相关目录
 mkdir -p  /var/log/openvpn
 mkdir -p /opt/vpnuser
-mkdir -p /etc/openvpn/easy-rsa/3/pki/Epoint
-cp pki/ca.crt pki/Epoint/
-cp ta.key pki/Epoint/
+mkdir -p /etc/openvpn/easy-rsa/3/pki/package
+cp pki/ca.crt pki/package/
+cp ta.key pki/package/
 # client.ovpn 中的remote地址根据自己实际地址或域名来修改
-cp /opt/openvpn-cms-flask/app/scripts/client.ovpn pki/Epoint/
+cp /opt/openvpn-cms-flask/app/scripts/client.ovpn pki/package/
 #开启openvpn并设置开机启动
 systemctl start openvpn@server
 systemctl enable openvpn@server
