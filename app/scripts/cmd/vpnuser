@@ -27,12 +27,12 @@ else
 #	source ./vars &>/dev/null
 	./openvpn_user_create.expect $vpn_user &>/dev/null
 	mkdir -p /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user
-	cp /etc/openvpn/easy-rsa/3.0/pki/Epoint/client.ovpn  /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+	cp /etc/openvpn/easy-rsa/3.0/pki/package/client.ovpn  /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "<ca>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
-        cat /etc/openvpn/easy-rsa/3.0/pki/Epoint/ca.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+        cat /etc/openvpn/easy-rsa/3.0/pki/package/ca.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
         echo "</ca>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "<tls-auth>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
-        cat /etc/openvpn/easy-rsa/3.0/pki/Epoint/ta.key >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+        cat /etc/openvpn/easy-rsa/3.0/pki/package/ta.key >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
         echo "</tls-auth>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "<cert>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	cat /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
@@ -40,15 +40,11 @@ else
 	echo "<key>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	cat /etc/openvpn/easy-rsa/3.0/pki/private/$vpn_user.key >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "</key>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
-#	cp /etc/openvpn/easy-rsa/3.0/pki/Epoint/*  /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/	  
-#	echo "cert $vpn_user.crt">>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/client.ovpn
-#	echo "key $vpn_user.key">>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/client.ovpn
 	cd /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/
 	zip -r $vpn_user.zip $vpn_user &>/dev/null
 	mv $vpn_user.zip  /opt/vpnuser/
 	echo "=========================<成功提示>============================"
 	echo "VPN用户:$vpn_user创建成功!"
-#	rm -rf $vpn_user.c* $vpn_user.key ca.crt client.ovpn
 	echo "=========================<成功提示>============================"
 	echo "vpn用户: $vpn_user 密钥已生成在/opt/vpnuser 下，请自行获取！！！"
 	echo "==============================================================="
@@ -61,8 +57,6 @@ fi
 {
 if [ -f /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt ];then
 	cd /etc/openvpn/easy-rsa/3.0/
-#	source ./vars &>/dev/null
-#	/etc/openvpn/easy-rsa/3.0/easy-rsa revoke  $vpn_user &>/dev/null
 	./openvpn_user_delete.expect $vpn_user &>/dev/null
 	rm -rf /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt
 	rm -rf /etc/openvpn/easy-rsa/3.0/pki/private/$vpn_user.key
@@ -71,7 +65,6 @@ if [ -f /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt ];then
 	rm -rf /opt/vpnuser/$vpn_user.zip
 	./easyrsa gen-crl &>/dev/null
 	chmod 666 pki/crl.pem
-	#systemctl restart openvpn@server.service
 	echo "=========================<成功提示>============================"
 	echo "注销并已删除vpn用户: $vpn_user成功"
 	echo "==============================================================="
