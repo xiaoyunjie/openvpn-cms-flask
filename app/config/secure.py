@@ -39,5 +39,5 @@ class ProductionSecure(BaseConfig):
     :vpn服务器地址 VPN_ADDRESS
     :vpn服务器端口 VPN_PORT
 """
-VPN_ADDRESS = '192.168.1.1'
+VPN_ADDRESS = '127.0.0.1'
 VPN_PORT = '11940'
