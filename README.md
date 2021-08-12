@@ -141,7 +141,7 @@ cp -r /usr/share/easy-rsa  /etc/openvpn/
 cp -r /opt/openvpn-cms-flask/app/scripts/vars /etc/openvpn/easy-rsa/3.0/
 cp /opt/openvpn-cms-flask/app/scripts/server.conf  /etc/openvpn/
 cp /opt/openvpn-cms-flask/app/scripts/cmd/* /usr/local/bin/ && chmod 755 -R /usr/local/bin/
-cp /opt/openvpn-cms-flask/app/scripts/*.expect /etc/openvpn/easy-rsa/3.0/
+cp /opt/openvpn-cms-flask/app/scripts/*.expect /etc/openvpn/easy-rsa/3.0/  && chmod +x /etc/openvpn/easy-rsa/3.0/*.expect
 ```
 
 ##### 创建证书
