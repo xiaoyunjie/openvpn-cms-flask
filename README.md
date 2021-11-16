@@ -172,10 +172,9 @@ cp /opt/openvpn-cms-flask/app/scripts/client.ovpn pki/package/
 #开启openvpn并设置开机启动
 systemctl start openvpn@server
 systemctl enable openvpn@server
-# 每天凌晨重启，重新加载crl.pem，每10分钟执行一次ip mac绑定
+# 每10分钟执行一次ip mac绑定
 crontab -l > /var/tmp/tmp.cron
 echo "*/10 * * * *  sh  /usr/local/bin/add_arp.sh" >> /var/tmp/tmp.cron
-echo "0 0 * * *  systemctl restart openvpn@server" >> /var/tmp/tmp.cron
 crontab /var/tmp/tmp.cron
 ```
 
