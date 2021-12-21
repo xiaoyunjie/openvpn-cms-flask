@@ -77,7 +77,6 @@ class OpenvpnSocket(object):
         except IOError:
             warning('No compatible geoip1 or geoip2 data/libraries found. IOError')
 
-        # self.vpn_info(host, port)
 
     def _socket_send(self, command):
         if sys.version_info[0] == 2:
@@ -95,8 +94,6 @@ class OpenvpnSocket(object):
         timeout = 3
         self.s = False
         try:
-            # self.s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            # self.s.connect((host, port))
             self.s = socket.create_connection((host, port), timeout)
         except socket.timeout as e:
             print('str(e):\t\t', str(e))
@@ -124,33 +121,22 @@ class OpenvpnSocket(object):
 
     @staticmethod
     def parse_stats(data):
-        # stats = {}
         line = re.sub('SUCCESS: ', '', data)
         parts = line.split(',')
         stats = parts[0]
         res = stats.split('=')
         nclients = res[1]
-        # stats["nclients"] = int(re.sub('nclients=', '', parts[0]))
-        # stats["bytesin"] = int(re.sub('bytesin=', '', parts[1]))
-        # stats["bytesout"] = int(re.sub('bytesout=', '', parts[2]).replace('\r\n', ''))
-        # stats = json.dumps(stats)
-        # print(stats)
         return nclients
 
     def parse_status(self, data):
         gi = self.gi
         geoip_version = self.geoip_version
         client_section = False
-        # routes_section = False
         sessions = []
-        # client_session = {}
 
         for line in data.splitlines():
-            # print("line:%s" % line)
             parts = deque(line.split('\t'))
-            # print("parts: %s" % parts)
             if parts[0].startswith('END'):
-                # print("parts[0]: %s" % parts[0])
                 break
             if parts[0].startswith('TITLE') or \
                     parts[0].startswith('GLOBAL') or \
@@ -159,10 +145,8 @@ class OpenvpnSocket(object):
             if parts[0] == 'HEADER':
                 if parts[1] == 'CLIENT_LIST':
                     client_section = True
-                    # routes_section = False
                 if parts[1] == 'ROUTING_TABLE':
                     client_section = False
-                    # routes_section = True
                 continue
 
             if client_section:
@@ -273,18 +257,3 @@ class OpenvpnSocket(object):
         # print(vpn_sessions)
         return vpn_sessions
 
-    # def vpn_info(self, host, port):
-    #     self._socket_connect(host, port)
-    #     version = self.collect_data_version()
-    #     vpn_stats = self.collect_data_stats()
-    #     vpn_sessions = self.collect_data_sessions()
-    #     self._socket_disconnect()
-    #     print(version, vpn_stats, vpn_sessions)
-    #     return version, vpn_stats, vpn_sessions
-
-
-# if __name__ == '__main__':
-#     INFO = OpenvpnSocket()
-#     INFO.collect_data_version("192.168.149.150", 11940)
-#     INFO.collect_data_stats("192.168.149.150", 11940)
-#     INFO.collect_data_sessions("192.168.149.150", 11940)
