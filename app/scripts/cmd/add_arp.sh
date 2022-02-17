@@ -23,7 +23,7 @@ if [[ $ARP != '' ]];then
         fi
     done
 else
-    /sbin/arp -an | grep tap0 | grep -v PERM | grep -v incomplete | awk '{print ($2 " " $4)}' | sed 's/[\(\)]//g' > $ARP_MAP
+    /sbin/arp -an | grep tap0 | grep -v PERM | grep -v incomplete | awk '{print ($2 " " $4)}' | sed 's/[\(\)]//g' >> $ARP_MAP
 fi
 
 /sbin/arp -f $ARP_MAP
