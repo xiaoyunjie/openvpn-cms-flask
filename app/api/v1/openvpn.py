@@ -32,7 +32,7 @@ manager_info = OpenvpnSocket()
 
 # 创建用户
 @openvpn_api.route('', methods=['POST'])
-@route_meta(auth='创建openvpn用户', module='用户', mount=True)
+@route_meta(auth='创建openvpn用户', module='openvpn', mount=True)
 @group_required
 def create_user():
     form = CreateUserForm().validate_for_api()
@@ -46,6 +46,7 @@ def create_user():
 
 # 查询单个用户
 @openvpn_api.route('/<vid>', methods=['GET'])
+@route_meta(auth='查询单个用户', module='openvpn', mount=True)
 @login_required
 def get_user(vid):
     user = OpenVPNUser.get_detail(vid)
@@ -54,6 +55,7 @@ def get_user(vid):
 
 # 查询所有用户
 @openvpn_api.route('', methods=['GET'])
+@route_meta(auth='查询所有openvpn用户', module='openvpn', mount=True)
 @login_required
 def get_users():
     start, count = paginate()
@@ -66,7 +68,7 @@ def get_users():
 
 # 根据username注销用户
 @openvpn_api.route('/deluser', methods=['DELETE', 'POST'])
-@route_meta(auth='注销openvpn账号', module='用户', mount=True)
+@route_meta(auth='注销openvpn账号', module='openvpn', mount=True)
 @group_required
 def delete_openvpnuser():
     form = CreateUserForm().validate_for_api()
@@ -80,6 +82,7 @@ def delete_openvpnuser():
 
 # 更新用户mac
 @openvpn_api.route('/update', methods=['POST'])
+@route_meta(auth='更新用户MAC', module='openvpn', mount=True)
 @login_required  # 只有在登入后后才可访问
 def update_mac():
     form = UserSearchForm().validate_for_api()
@@ -94,6 +97,7 @@ def update_mac():
 
 # 搜索用户信息
 @openvpn_api.route('/userinfosearch', methods=['GET'])
+@route_meta(auth='搜索用户信息', module='openvpn', mount=True)
 @login_required
 def search_user():
     form = HistoryInfoForm().validate_for_api()
@@ -117,6 +121,7 @@ def search_user():
 
 # 根据用户查询IP
 @openvpn_api.route('/searchip', methods=['GET', 'POST'])
+@route_meta(auth='根据用户查询IP', module='openvpn', mount=True)
 @login_required
 def get_user_ip():
     form = UserSearchForm().validate_for_api()
@@ -133,6 +138,8 @@ def get_user_ip():
 
 # 根据IP查询用户
 @openvpn_api.route('/searchuser', methods=['POST'])
+@route_meta(auth='根据IP查询用户', module='openvpn', mount=True)
+@login_required
 def get_ip_user():
     form = IPSearchForm().validate_for_api()
     command = ["/usr/local/bin/get_user_ip.sh", form.openvpn_ip.data]
@@ -146,6 +153,8 @@ def get_ip_user():
 
 # 绑定arp
 @openvpn_api.route('/arpbinding', methods=['POST'])
+@route_meta(auth='绑定arp', module='openvpn', mount=True)
+@login_required
 # @login_required
 def arp_binding():
     remote_server.onetime_shell("/bin/bash /usr/local/bin/add_arp.sh")
@@ -154,6 +163,7 @@ def arp_binding():
 
 # 查询所有历史信息(分页展示)
 @openvpn_api.route('/info', methods=['GET'])
+@route_meta(auth='查询历史信息', module='openvpn', mount=True)
 @login_required
 def get_info():
     start, count = paginate()
@@ -166,6 +176,7 @@ def get_info():
 
 # 搜索历史信息
 @openvpn_api.route('/infosearch', methods=['GET'])
+@route_meta(auth='搜索历史信息', module='openvpn', mount=True)
 @login_required
 def search_info():
     form = HistoryInfoForm().validate_for_api()
@@ -189,6 +200,8 @@ def search_info():
 
 # 下载证书
 @openvpn_api.route('/download', methods=['GET'])
+@route_meta(auth='下载证书', module='openvpn', mount=True)
+@login_required
 def download_cert():
     form = UserSearchForm().validate_for_api()
     filename = form.openvpn_user_info.data + ".zip"
@@ -209,6 +222,7 @@ def download_cert():
 
 # openvpn版本信息
 @openvpn_api.route('/openvpnversion', methods=['GET'])
+@route_meta(auth='查询openvpn版本信息', module='openvpn', mount=True)
 @login_required
 def get_openvpn_version():
     version = manager_info.collect_data_version(VPN_ADDRESS, VPN_PORT)
@@ -217,6 +231,7 @@ def get_openvpn_version():
 
 # 当前已连接客户端数量load-stats
 @openvpn_api.route('/clientsconnected', methods=['GET'])
+@route_meta(auth='客户端在线连接数', module='openvpn', mount=True)
 @login_required
 def get_clients_connected():
     nclients = manager_info.collect_data_stats(VPN_ADDRESS, VPN_PORT)
@@ -225,6 +240,7 @@ def get_clients_connected():
 
 # 查询已连接客户端详细信息status 3
 @openvpn_api.route('/clientslist', methods=['GET'])
+@route_meta(auth='在线用户详细信息', module='openvpn', mount=True)
 @login_required
 def get_clientslist():
     vpn_session = manager_info.collect_data_sessions(VPN_ADDRESS, VPN_PORT)
@@ -233,6 +249,7 @@ def get_clientslist():
 
 # 总访问量
 @openvpn_api.route('/totalvisits', methods=['GET'])
+@route_meta(auth='openvpn总访问量', module='openvpn', mount=True)
 @login_required
 def get_totalvisits():
     totalnumber = OpenVPNLogInfo.get_total_nums()
@@ -241,6 +258,7 @@ def get_totalvisits():
 
 # 总用户数
 @openvpn_api.route('/totalusers', methods=['GET'])
+@route_meta(auth='openvpn总用户数', module='openvpn', mount=True)
 @login_required
 def get_totalusers():
     totalusers = OpenVPNUser.get_total_nums()
