@@ -204,8 +204,6 @@ service iptables save
 service iptables restart
 ```
 
-openvpn密码是固定的：username@vpn ，username是新增的用户名
-
 ---
 
 ### 六、API接口

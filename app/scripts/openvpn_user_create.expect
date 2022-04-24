@@ -11,10 +11,10 @@ if $argc<1 {
  set vpnuser [lindex $argv 0]
  set path /etc/openvpn/easy-rsa/3.0
  
-spawn $path/easyrsa build-client-full  $vpnuser
- expect "Enter PEM pass phrase:"
- send "$vpnuser@vpn\r"
- expect "Verifying - Enter PEM pass phrase:"
- send "$vpnuser@vpn\r"
+spawn $path/easyrsa build-client-full  $vpnuser nopass
+# expect "Enter PEM pass phrase:"
+# send "$vpnuser@vpn\r"
+# expect "Verifying - Enter PEM pass phrase:"
+# send "$vpnuser@vpn\r"
  expect eof
  exit
