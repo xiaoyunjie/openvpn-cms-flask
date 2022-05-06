@@ -1,4 +1,4 @@
-paramiko==2.7.1
+paramiko==2.10.1
 Lin-CMS==0.2.0b2
 geoip2==3.0.0
 GeoIP==1.3.2
