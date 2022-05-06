@@ -200,8 +200,8 @@ def search_info():
 
 # 下载证书
 @openvpn_api.route('/download', methods=['GET'])
-@route_meta(auth='下载证书', module='openvpn', mount=True)
-@login_required
+# @route_meta(auth='下载证书', module='openvpn', mount=True)
+# @login_required
 def download_cert():
     form = UserSearchForm().validate_for_api()
     filename = form.openvpn_user_info.data + ".zip"
