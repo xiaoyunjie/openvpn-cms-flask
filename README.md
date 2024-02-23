@@ -218,6 +218,6 @@ https://easydoc.net/p/82789167/iBTVBVhE
 
 ## 如果此系统对你有所帮助，请Start一波！！
 
-## 欢迎交流
+## FAQ
 
 QQ：2913381648
