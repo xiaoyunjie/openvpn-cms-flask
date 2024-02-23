@@ -167,7 +167,7 @@ mkdir -p /opt/vpnuser
 mkdir -p /etc/openvpn/easy-rsa/3/pki/package
 cp pki/ca.crt pki/package/
 cp ta.key pki/package/
-# client.ovpn 中的remote地址根据自己实际地址或域名来修改
+# 拷贝客户端配置模板 client.ovpn 
 cp /opt/openvpn-cms-flask/app/scripts/client.ovpn pki/package/
 #开启openvpn并设置开机启动
 systemctl start openvpn@server
@@ -176,6 +176,11 @@ systemctl enable openvpn@server
 crontab -l > /var/tmp/tmp.cron
 echo "*/10 * * * *  sh  /usr/local/bin/add_arp.sh" >> /var/tmp/tmp.cron
 crontab /var/tmp/tmp.cron
+```
+#### 修改客户端配置模板
+```bash
+# remote地址根据实际出口地址或域名来修改
+vim /etc/openvpn/easy-rsa/3/pki/package/client.ovpn
 ```
 
 #### iptables配置
@@ -207,7 +212,7 @@ service iptables restart
 ---
 
 ### 六、API接口
-https://easydoc.xyz/doc/82789167/iBTVBVhE/CGQNK5YF
+https://easydoc.net/p/82789167/iBTVBVhE
 
 ---
 
