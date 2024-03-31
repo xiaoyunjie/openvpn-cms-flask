@@ -212,7 +212,7 @@ service iptables restart
 ---
 
 ### 六、API接口
-https://easydoc.net/p/82789167/iBTVBVhE
+链接：https://easydoc.net/s/87401961   密码：openvpn
 
 ---
 
