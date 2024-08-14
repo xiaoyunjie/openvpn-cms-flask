@@ -47,7 +47,7 @@ VPN历史信息
 ---
 ### 三、环境部署
 ##### CentOS 7
-- python 3.6+
+- python 3.8+
 - mysql 5.6+
 - openvpn 2.4.7+
 
@@ -85,15 +85,24 @@ character_set_server=utf8mb4
 ---
 ### 四、CMS部署
 
-##### python36
-`yum install -y gcc GeoIP GeoIP-devel python36  python36-setuptools  python36-devel`
+##### python38
 
-`easy_install-3.6 pip`
+```bash
+yum install -y gcc GeoIP GeoIP-devel git
+# 下载anaconda
+wget https://repo.anaconda.com/archive/Anaconda3-2024.06-1-Linux-x86_64.sh
+# 安装，输入两次yes
+sh Anaconda3-2024.06-1-Linux-x86_64.sh
+source .bashrc
+conda -V
+# 创建环境
+conda create --name openvpn-cms-flask python=3.8.0
+# 激活新环境
+conda activate openvpn-cms-flask
+```
 
 ##### openvpn-cms-flask
 `cd /opt && git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git  openvpn-cms-flask`
-
-`cd openvpn-cms-flask && python3.6 -m venv venv`
 
 ```bash
 ## 指定pip源，加速下载
@@ -108,7 +117,7 @@ EOF
 
 ##### 依赖安装
 
-`source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt`
+`cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://mirrors.aliyun.com/pypi/simple/ `
 
 ##### 新增超级账户
 
@@ -120,7 +129,7 @@ EOF
 `vi openvpn-cms-flask/app/config/setting.py` 修改 SITE_DOMAIN，指定访问api服务的url, 用于本地文件上传，域名或IP地址
 
 ##### 启动服务
-`python3.6 starter.py`
+`python starter.py`
 
 http://localhost:5000
 
