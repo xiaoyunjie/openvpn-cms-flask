@@ -104,17 +104,6 @@ conda activate openvpn-cms-flask
 ##### openvpn-cms-flask
 `cd /opt && git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git  openvpn-cms-flask`
 
-```bash
-## 指定pip源，加速下载
-mkdir -p  /root/.pip/
-cat >  /root/.pip/pip.conf   <<EOF
-[global]
-index-url = https://pypi.tuna.tsinghua.edu.cn/simple
-[install]
-trusted-host=pypi.tuna.tsinghua.edu.cn
-EOF
-```
-
 ##### 依赖安装
 
 `cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://mirrors.aliyun.com/pypi/simple/ `
