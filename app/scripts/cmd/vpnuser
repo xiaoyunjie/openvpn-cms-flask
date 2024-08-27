@@ -29,11 +29,11 @@ else
 	mkdir -p /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user
 	cp /etc/openvpn/easy-rsa/3.0/pki/package/client.ovpn  /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "<ca>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
-        cat /etc/openvpn/easy-rsa/3.0/pki/package/ca.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
-        echo "</ca>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+  cat /etc/openvpn/easy-rsa/3.0/pki/package/ca.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+  echo "</ca>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "<tls-auth>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
-        cat /etc/openvpn/easy-rsa/3.0/pki/package/ta.key >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
-        echo "</tls-auth>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+  cat /etc/openvpn/easy-rsa/3.0/pki/package/ta.key >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
+  echo "</tls-auth>" >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "<cert>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	cat /etc/openvpn/easy-rsa/3.0/pki/issued/$vpn_user.crt >> /etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
 	echo "</cert>" >>/etc/openvpn/easy-rsa/3.0/pki/client_certs_keys/$vpn_user/$vpn_user.ovpn
