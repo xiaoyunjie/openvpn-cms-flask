@@ -11,7 +11,7 @@ def main():
             # 创建一个超级管理员
             user = User()
             user.username = 'super'
-            user.password = '123456'
+            user.password = 'openvpn@123456'
             user.email = 'hello_openvpn@163.com'
             # admin 2 的时候为超级管理员，普通用户为 1
             user.admin = 2
