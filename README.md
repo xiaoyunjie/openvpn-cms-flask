@@ -216,6 +216,3 @@ service iptables restart
 
 ## 如果此系统对你有所帮助，请Start一波！！
 
-## FAQ
-
-QQ：2913381648
