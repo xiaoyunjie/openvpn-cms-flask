@@ -88,7 +88,7 @@ character_set_server=utf8mb4
 ##### python38
 
 ```bash
-yum install -y gcc GeoIP GeoIP-devel git
+yum install -y gcc GeoIP GeoIP-devel git net-tools
 # 下载anaconda
 wget https://repo.anaconda.com/archive/Anaconda3-2024.06-1-Linux-x86_64.sh
 # 安装，输入两次yes
@@ -106,11 +106,11 @@ conda activate openvpn-cms-flask
 
 ##### 依赖安装
 
-`cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://mirrors.aliyun.com/pypi/simple/ `
+`cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ##### 新增超级账户
 
-`python add_super.py` （ super 123456）
+`python add_super.py` （ super openvpn@123456）
 
 ##### 修改配置项
 `vi openvpn-cms-flask/app/config/secure.py` 修改地址和端口，地址为部署vpn的地址，端口使用11940，同时修改数据库连接字符串
