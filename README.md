@@ -106,7 +106,7 @@ conda activate openvpn-cms-flask
 
 ##### 依赖安装
 
-`cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://pypi.tuna.tsinghua.edu.cn/simple
+`cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://pypi.tuna.tsinghua.edu.cn/simple `
 
 ##### 新增超级账户
 
