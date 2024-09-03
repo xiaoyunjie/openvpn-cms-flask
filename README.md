@@ -52,11 +52,11 @@ VPN历史信息
 - openvpn 2.4.7+
 
 ##### 数据库
-`curl -O http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm`
-
-`rpm -ivh mysql-community-release-el7-5.noarch.rpm`
-
-`yum install -y epel-release   mysql-community-server`
+```bash
+curl -O http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+rpm -ivh mysql-community-release-el7-5.noarch.rpm
+yum install -y epel-release   mysql-community-server
+```
 
 ```sql
 mysql -u root -p
@@ -73,13 +73,13 @@ exit
 [mysqld]
 character_set_server=utf8mb4
 ```
-**启动mysql**
 
-`systemctl start mysqld`
-
-**开机启动mysql**
-
-`systemctl enable mysqld`
+```bash
+# 启动mysql
+systemctl start mysqld
+# 开机启动mysql
+systemctl enable mysqld
+```
 
 
 ---
@@ -102,20 +102,18 @@ conda activate openvpn-cms-flask
 ```
 
 ##### openvpn-cms-flask
-`cd /opt && git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git  openvpn-cms-flask`
-
-##### 依赖安装
-
-`cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://pypi.tuna.tsinghua.edu.cn/simple `
-
-##### 新增超级账户
-
-`python add_super.py` （ super openvpn@123456）
-
-##### 修改配置项
-`vi openvpn-cms-flask/app/config/secure.py` 修改地址和端口，地址为部署vpn的地址，端口使用11940，同时修改数据库连接字符串
-
-`vi openvpn-cms-flask/app/config/setting.py` 修改 SITE_DOMAIN，指定访问api服务的url, 用于本地文件上传，域名或IP地址
+```bash
+cd /opt && git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git  openvpn-cms-flask
+# 依赖安装
+cd openvpn-cms-flask && pip3 install -r requirements.txt  -i https://pypi.tuna.tsinghua.edu.cn/simple
+# 新增超级账户 super openvpn@123456
+python add_super.py
+# 修改配置项
+# 修改地址和端口，地址为部署vpn的地址，端口使用11940，同时修改数据库连接字符串
+vi openvpn-cms-flask/app/config/secure.py
+# 修改 SITE_DOMAIN，指定访问api服务的url, 用于本地文件上传，域名或IP地址
+vi openvpn-cms-flask/app/config/setting.py
+```
 
 ##### 启动服务
 `python starter.py`
