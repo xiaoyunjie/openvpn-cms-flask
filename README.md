@@ -2,13 +2,11 @@
 
 ### （如果此系统对你有所帮助，请Start一波！！）
 
-## [前端系统传送门](https://github.com/xiaoyunjie/openvpn-cms-vue)
+### [前端系统传送门](https://github.com/xiaoyunjie/openvpn-cms-vue)
 
 ---
-### 一、需求
-使用`openvpn`开源系统构建了一整套满足vpn需求的产品。
-
-需要一套针对openvpn的内容管理系统，操作简单、维护方便、交互体验好、有日志查询、权限管控、开放API等功能，同时提供插件扩展。
+## 概述
+基于`openvpn`开源系统做了一个web端，便于操作、维护以及可视化。
 
 **功能：**
 - web端交互，无需linux基础，操作简单
@@ -17,22 +15,6 @@
 - 历史登入信息查询
 - 一键注销用户，方便省力
 - 开放的API调用
-
-
----
-### 二、语言环境选择
-经过筛选，选择前后端分离，全部通过API交互，方便后续前后端系统的重构。
-
-**前端选择：** `VUE`
-
-**后端选择：** `FLASK`
-
-**数据库：** `Mysql`
-
-**语言环境：** `Python`
-
-
->基于开源框架Lin-cms二次开发
 
 VPN概览
 ![images](images/openvpn-1.png)
@@ -43,15 +25,50 @@ VPN列表
 VPN历史信息
 ![images](images/openvpn-3.png)
 
+---
+## 部署
 
 ---
-### 三、环境部署
-##### CentOS 7
+### 容器化部署
+#### 基础环境
+- CentOS 7
+- 防火墙建议关闭，如果开启，请开启 UDP/11940 TCP/8000
+```bash
+systemctl stop firewalld
+systemctl disable firewalld
+## 开启内核转发功能
+echo "net.ipv4.ip_forward = 1" > /etc/sysctl.conf
+sysctl -p
+```
+#### docker
+- 初始化配置文件和证书
+```bash
+# x.x.x.x 填入互联网IP，此IP后续可以在client.ovpn文件中修改
+# 路径 ./service/openvpn/data/easy-rsa/3/pki/package
+docker compose run --rm openvpn-cms-flask vpn_init x.x.x.x
+```
+- 启动服务
+```bash
+docker compose up -d 
+```
+- 访问 http://x.x.x.x:8000
+
+#### FAQ
+- 容器化部署，默认 tun 模式，不支持 MAC 地址绑定和解绑功能
+- 拨通vpn，要访问网段，请在server.conf中添加push路由，路径 ./service/openvpn/data/server.conf
+- 服务器防火墙关闭，不影响容器内部路由转发，容器启动时已经添加到iptables
+- 服务器网卡id默认不是eth0，请修改环境变量 ./service/openvpn/data/ovpn_env.sh OVPN_NATDEVICE 重启容器
+- 想调整vpn默认下放的IP子网，请修改 server.conf 和 ovpn_env.sh 中的子网段，然后重启容器
+
+---
+
+### 传统方式部署
+#### CentOS 7
 - python 3.8+
 - mysql 5.6+
 - openvpn 2.4.7+
 
-##### 数据库
+#### 数据库
 ```bash
 curl -O http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
 rpm -ivh mysql-community-release-el7-5.noarch.rpm
@@ -81,12 +98,9 @@ systemctl start mysqld
 systemctl enable mysqld
 ```
 
+#### CMS
 
----
-### 四、CMS部署
-
-##### python38
-
+- 基于conda创建python虚拟环境
 ```bash
 yum install -y gcc GeoIP GeoIP-devel git net-tools
 # 下载anaconda
@@ -101,7 +115,7 @@ conda create --name openvpn-cms-flask python=3.8.0
 conda activate openvpn-cms-flask
 ```
 
-##### openvpn-cms-flask
+#### openvpn-cms-flask
 ```bash
 cd /opt && git clone https://github.com/xiaoyunjie/openvpn-cms-flask.git  openvpn-cms-flask
 # 依赖安装
@@ -115,19 +129,16 @@ vi openvpn-cms-flask/app/config/secure.py
 vi openvpn-cms-flask/app/config/setting.py
 ```
 
-##### 启动服务
-`python starter.py`
+#### 前台启动服务
+`python starter.py`    http://localhost:5000
 
-http://localhost:5000
-
-##### 开机自启动
+#### 开机自启动
 `sh start.sh` 运行此脚本，会生成启动和停止python系统的两个脚本，并将启动脚本设置开机运行。
 
+####  openvpn
 
-----
-###  五、openvpn部署
-#### 配置文件
-- 对于`server.conf`  `vars`等脚本，建议根据自己的需求来修改
+- 对于`server.conf`  `vars`等脚本，建议根据自己的需求来修改，也可以直接使用默认
+
 ```bash
 setenforce 0
 sed -i '/^SELINUX=/c\SELINUX=disabled' /etc/selinux/config
@@ -139,7 +150,7 @@ cp /opt/openvpn-cms-flask/app/scripts/cmd/* /usr/local/bin/ && chmod 755 -R /usr
 cp /opt/openvpn-cms-flask/app/scripts/*.expect /etc/openvpn/easy-rsa/3.0/  && chmod +x /etc/openvpn/easy-rsa/3.0/*.expect
 ```
 
-##### 创建证书
+#### 创建证书
 ```bash
 cd /etc/openvpn/easy-rsa/3.0
 ./easyrsa init-pki
@@ -173,6 +184,7 @@ crontab -l > /var/tmp/tmp.cron
 echo "*/10 * * * *  sh  /usr/local/bin/add_arp.sh" >> /var/tmp/tmp.cron
 crontab /var/tmp/tmp.cron
 ```
+
 #### 修改客户端配置模板
 ```bash
 # remote地址根据实际出口地址或域名来修改
@@ -207,10 +219,5 @@ service iptables restart
 
 ---
 
-### 六、API接口
+### API接口
 链接：https://easydoc.net/s/87401961   密码：openvpn
-
----
-
-## 如果此系统对你有所帮助，请Start一波！！
-
