@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# 脚本只要发生错误，就终止执行
+set -e
+
+# 参数组
+USER_ARGS=("${@}")
+ARGS=()
+
+# 参数检查重复
+function hasArg {
+    local element
+    for element in "${@:2}"; do
+        [ "${element}" == "${1}" ] && return 0
+    done
+    return 1
+}
+
+# 添加参数
+function addArg {
+    local arg="${1}"
+    [ $# -ge 1 ] && local val="${2}"
+    if ! hasArg "${arg}" "${USER_ARGS[@]}"; then
+        ARGS+=("${arg}")
+        [ $# -ge 1 ] && ARGS+=("${val}")
+    fi
+}
+
+# openvpn启动参数
+addArg "--config" "/etc/openvpn/server.conf"
+
+# tun
+mkdir -p /dev/net
+if [ ! -c /dev/net/tun ]; then
+    mknod /dev/net/tun c 10 200
+fi
+
+
+function setup_iptables {
+    iptables -t nat -A POSTROUTING -s $OVPN_SERVER -o $OVPN_NATDEVICE -j MASQUERADE 2>/dev/null
+}
+
+source "/etc/openvpn/ovpn_env.sh"
+setup_iptables
+
+if [ $# -ge 1 ] ;then
+  # shellcheck disable=SC2145
+  echo "Running 'openvpn ${ARGS[@]} ${USER_ARGS[@]}'"
+  # shellcheck disable=SC2068
+  exec openvpn ${ARGS[@]} ${USER_ARGS[@]}
+else
+  # start openvpn-cms-flask
+  sleep 5
+  python starter.py > /opt/openvpn-cms-flask/logs/openvpn-cms-flask.log   2>&1  &
+  # shellcheck disable=SC2068
+  exec openvpn ${ARGS[@]}
+fi
+
+
+

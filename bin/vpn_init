@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Initialize the EasyRSA PKI
+
+IP=$1
+VPN_SERVER=${IP:=127.0.0.1}
+
+cp -r /usr/share/easy-rsa  /etc/openvpn/ \
+&& cp -r /opt/openvpn-cms-flask/app/scripts/vars /etc/openvpn/easy-rsa/3.0/ \
+&& cp /opt/openvpn-cms-flask/app/scripts/server.conf  /etc/openvpn/ \
+&& sed -i s/\#dev\ tun/dev\ tun/g /etc/openvpn/server.conf \
+&& sed -i s/dev\ tap/\#dev\ tap/g /etc/openvpn/server.conf \
+&& cp /opt/openvpn-cms-flask/app/scripts/ovpn_env.sh /etc/openvpn/ \
+&& cp /opt/openvpn-cms-flask/app/scripts/*.expect /etc/openvpn/easy-rsa/3.0/  \
+&& chmod +x /etc/openvpn/easy-rsa/3.0/*.expect \
+&& cd /etc/openvpn/easy-rsa/3.0 \
+&& ./easyrsa init-pki \
+&& ./easyrsa --batch build-ca  nopass \
+&& ./easyrsa gen-dh \
+&& ./easyrsa build-server-full openvpnserver nopass \
+&& openvpn --genkey --secret ta.key \
+&& ./easyrsa gen-crl \
+&& chmod 666 pki/crl.pem \
+&& mkdir -p  /var/log/openvpn \
+&& mkdir -p /opt/vpnuser \
+&& mkdir -p /etc/openvpn/easy-rsa/3/pki/package \
+&& cp pki/ca.crt pki/package/ \
+&& cp ta.key pki/package/ \
+&& cp /opt/openvpn-cms-flask/app/scripts/client.ovpn pki/package/ \
+&& sed -i s/\#dev\ tun/dev\ tun/g pki/package/client.ovpn \
+&& sed -i s/dev\ tap/\#dev\ tap/g pki/package/client.ovpn \
+&& sed -i s/openvpn.example.com/$VPN_SERVER/g pki/package/client.ovpn
+
+cd /opt/openvpn-cms-flask \
+&& sleep 3 \
+&& python add_super.py
+
+echo "Initialization complete"

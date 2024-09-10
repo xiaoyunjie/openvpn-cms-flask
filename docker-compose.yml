@@ -1,0 +1,62 @@
+services:
+  openvpn-cms-vue:
+    image: registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-vue:v1.1.0
+    container_name: openvpn-cms-vue
+    volumes:
+      - ./service/nginx/logs:/var/log/nginx
+    ports:
+      - "8000:8000"
+    links:
+      - openvpn-cms-flask
+    restart: always
+    networks:
+      - openvpn
+    depends_on:
+      - openvpn-cms-flask
+
+  openvpn-cms-flask:
+    image: registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-flask:v1.2.7
+    container_name: openvpn-cms-flask
+    volumes:
+      - ./service/openvpn/data:/etc/openvpn
+      - ./service/openvpn/log:/var/log/openvpn
+      - ./service/vpnuser:/opt/vpnuser
+      - ./logs:/opt/openvpn-cms-flask/logs
+    ports:
+      - "5000:5000"
+      - "11940:11940/udp"
+    links:
+      - mysql
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - openvpn
+    depends_on:
+      - mysql
+
+  mysql:
+    image: registry.cn-hangzhou.aliyuncs.com/browser/mysql:8.0.21
+    restart: unless-stopped
+    container_name: mysql
+    volumes:
+      - ./service/mysql/data:/var/lib/mysql
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    environment:
+      MYSQL_ROOT_PASSWORD: "openvpn"
+      MYSQL_DATABASE: "openvpn"
+      TZ: Asia/Shanghai
+    privileged: true
+    ports:
+      - "3306:3306"
+    networks:
+      - openvpn
+
+networks:
+  openvpn:
+    driver: bridge
