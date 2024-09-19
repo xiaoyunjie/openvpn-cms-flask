@@ -59,7 +59,7 @@ docker compose up -d
 - 服务器防火墙关闭，不影响容器内部路由转发，容器启动时已经添加到iptables
 - 服务器网卡id默认不是eth0，请修改环境变量 ./service/openvpn/data/ovpn_env.sh OVPN_NATDEVICE 重启容器
 - 想调整vpn默认下放的IP子网，请修改 server.conf 和 ovpn_env.sh 中的子网段，然后重启容器
-- 默认超级账户 super openvpn@123456 
+- 默认超级账户 super openvpn@123456 ，可以进入容器调整add_super.py，并用python执行
 
 ---
 
