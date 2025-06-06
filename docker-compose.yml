@@ -15,7 +15,7 @@ services:
       - openvpn-cms-flask
 
   openvpn-cms-flask:
-    image: registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-flask:v1.2.7
+    image: registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-flask:v1.2.8
     container_name: openvpn-cms-flask
     volumes:
       - ./service/openvpn/data:/etc/openvpn
