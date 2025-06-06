@@ -168,8 +168,9 @@ class UserSearchForm(Form):
 
 class CreateUserForm(Form):
     username = StringField(
-        validators=[DataRequired(message='必须传入用户名'), length(min=1, max=20, message='用户名长度必须在1~20之间')])
-    # nickname = StringField(validators=[DataRequired(message='必须传入姓名昵称'),length(min=2, max=20, message='用户名长度必须在2~20之间')])
+        validators=[DataRequired(message='必须传入用户名'),
+                    Regexp(r'^[A-Za-z0-9_*&$#@]{6,22}$', message='密码长度必须在6~22位之间，包含字符、数字和 _ '),
+                    length(min=6, max=22, message='用户名长度必须在1~22之间')])
     nickname = StringField(validators=[length(max=20, message='用户名长度不能超过20')])
     summary = StringField(validators=[length(max=1000, message='备注信息不能超过1000')])
 

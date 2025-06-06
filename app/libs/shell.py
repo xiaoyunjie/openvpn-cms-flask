@@ -18,6 +18,12 @@ class Cmd(object):
         cmd = cmd[0].decode().rstrip()
         return cmd
 
+    def param_shell(self, username):
+        cmd = subprocess.run(["/usr/local/bin/vpnuser", "add", username],
+                             capture_output=True,
+                             text=True,
+                             check=True)
+        return cmd.stdout
 
 class Remote_cmd(object):
 
@@ -30,5 +36,7 @@ class Remote_cmd(object):
         stdin, stdout, stderr = self.ssh.exec_command(cmd)
         result = stdout.read().decode('utf-8').rstrip()
         if notice:
-           self.ssh.close()
+            self.ssh.close()
         return result
+
+

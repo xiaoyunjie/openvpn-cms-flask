@@ -7,11 +7,13 @@ from .enums import LocalOrCloud
 from lin.db import db
 from lin.redprint import Redprint
 from lin.core import lin_config
+from lin import login_required
 
 api = Redprint('oss')
 
 
 @api.route('/upload_to_local', methods=['POST'])
+@login_required
 def upload():
     image = request.files.get('image', None)
     if not image:
@@ -25,6 +27,7 @@ def upload():
 
 
 @api.route('/upload_to_ali', methods=['POST'])
+@login_required
 def upload_to_ali():
     image = request.files.get('image', None)
     if not image:
@@ -52,6 +55,7 @@ def upload_to_ali():
 
 
 @api.route('/upload_multiple', methods=['POST'])
+@login_required
 def upload_multiple_to_ali():
     imgs = []
     for item in request.files:

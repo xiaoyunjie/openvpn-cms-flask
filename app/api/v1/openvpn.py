@@ -38,9 +38,7 @@ def create_user():
     form = CreateUserForm().validate_for_api()
     result = OpenVPNUser.new_user(form)
     if result is True:
-        command = ["/usr/local/bin/vpnuser", "add", form.username.data]
-        command = ' '.join(str(d) for d in command)
-        remote_server.onetime_shell(command)
+        remote_server.param_shell(form.username.data)
         return Success(msg='用户创建成功')
 
 
@@ -76,7 +74,7 @@ def delete_openvpnuser():
     if result is True:
         command = ["/usr/local/bin/vpnuser", "del", form.username.data]
         command = ' '.join(str(d) for d in command)
-        remote_server.onetime_shell(command)
+        remote_server.remote_shell(command)
         return Success(msg='注销成功')
 
 
@@ -88,7 +86,7 @@ def update_mac():
     form = UserSearchForm().validate_for_api()
     command = ["/usr/local/bin/update_macaddress.sh", form.openvpn_user_info.data]
     command = ' '.join(str(d) for d in command)
-    value = remote_server.onetime_shell(command)
+    value = remote_server.remote_shell(command)
     if re.findall(r'已更新', value):
         return Success(msg='MAC address updated successfully')
     else:
@@ -127,7 +125,7 @@ def get_user_ip():
     form = UserSearchForm().validate_for_api()
     command = ["/usr/local/bin/get_user_ip.sh", form.openvpn_user_info.data]
     command = ' '.join(str(d) for d in command)
-    value = remote_server.onetime_shell(command)
+    value = remote_server.remote_shell(command)
     if re.findall('未注册', value):
         return ParameterException(msg='未注册')
     elif re.findall('未登入', value):
@@ -144,7 +142,7 @@ def get_ip_user():
     form = IPSearchForm().validate_for_api()
     command = ["/usr/local/bin/get_user_ip.sh", form.openvpn_ip.data]
     command = ' '.join(str(d) for d in command)
-    value = remote_server.onetime_shell(command)
+    value = remote_server.remote_shell(command)
     if re.findall('没有', value):
         raise ParameterException(msg='Unregistered')
     else:
@@ -157,7 +155,7 @@ def get_ip_user():
 @login_required
 # @login_required
 def arp_binding():
-    remote_server.onetime_shell("/bin/bash /usr/local/bin/add_arp.sh")
+    remote_server.remote_shell("/bin/bash /usr/local/bin/add_arp.sh")
     return Success(msg="arp绑定成功")
 
 

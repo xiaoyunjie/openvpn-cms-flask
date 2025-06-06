@@ -34,6 +34,7 @@ class ProductionSecure(BaseConfig):
 
     SECRET_KEY = '\x88W\xf09\x91\x07\x98\x89\x87\x96\xa0A\xc68\xf9\xecJJU\x17\xc5V\xbe\x8b\xef\xd7\xd8\xd3\xe6\x95*4'
 
+
 """
     :初始参数设置
     :vpn服务器地址 VPN_ADDRESS

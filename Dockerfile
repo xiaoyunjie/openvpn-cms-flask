@@ -21,6 +21,7 @@ RUN cp -r /opt/openvpn-cms-flask/bin/*  /usr/local/bin/  \
 
 # python
 RUN set -ex \
+    && yum makecache \
     && yum install -y gcc GeoIP GeoIP-devel net-tools  \
     && pip3 install --no-cache-dir -r requirements.txt  -i https://pypi.tuna.tsinghua.edu.cn/simple \
     && sed -i s/localhost/mysql/g  /opt/openvpn-cms-flask/app/config/secure.py

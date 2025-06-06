@@ -8,9 +8,9 @@
 all: build push
 
 build:
-	docker build --pull --platform linux/amd64 -t registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-flask:v1.2.7 .
+	docker build --pull --platform linux/amd64 -t registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-flask:v1.2.8 .
 
 push:
-	docker push registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-flask:v1.2.7
+	docker push registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-flask:v1.2.8
 
 .PHONY: all build push
