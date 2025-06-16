@@ -1,6 +1,6 @@
 services:
   openvpn-cms-vue:
-    image: registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-vue:v1.1.0
+    image: registry.cn-hangzhou.aliyuncs.com/browser/openvpn-cms-vue:v1.1.1
     container_name: openvpn-cms-vue
     volumes:
       - ./service/nginx/logs:/var/log/nginx
