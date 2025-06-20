@@ -41,6 +41,25 @@ echo "net.ipv4.ip_forward = 1" > /etc/sysctl.conf
 sysctl -p
 ```
 #### docker
+```bash
+# 配置阿里源
+yum -y install yum-utils
+sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+sudo yum makecache fast
+# 基础软件包
+yum install -y yum-utils device-mapper-persistent-data lvm2 bash-completion
+# 查看docker版本
+yum search  docker-ce --show-duplicate
+# x86_64
+yum install -y docker-ce-24.0.5-1.el7.x86_64
+# 启动
+systemctl start docker.service
+# 开机启动
+systemctl enable docker.service
+# 验证docker
+docker version
+```
+
 - 初始化配置文件和证书
 ```bash
 # x.x.x.x 填入互联网IP，此IP后续可以在client.ovpn文件中修改

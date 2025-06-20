@@ -1,0 +1,86 @@
+2025-06-17 10:46:31,173 DEBUG 46092   ---  [Thread-1] - [OPTIONS] -> [/cms/user/login] from:127.0.0.1 costs:1.330 ms data:{
+	param: {}, 
+	body: {}
+} 
+2025-06-17 10:46:31,368 DEBUG 46092   ---  [Thread-2] - [POST] -> [/cms/user/login] from:127.0.0.1 costs:190.460 ms data:{
+	param: {}, 
+	body: {'username': 'super', 'password': 'openvpn@123456'}
+} 
+2025-06-17 10:46:31,375 DEBUG 46092   ---  [Thread-3] - [OPTIONS] -> [/cms/user/auths] from:127.0.0.1 costs:0.200 ms data:{
+	param: {}, 
+	body: {}
+} 
+2025-06-17 10:46:31,382 DEBUG 46092   ---  [Thread-4] - [GET] -> [/cms/user/auths] from:127.0.0.1 costs:5.660 ms data:{
+	param: {}, 
+	body: {}
+} 
+2025-06-17 10:46:31,469 DEBUG 46092   ---  [Thread-5] - [OPTIONS] -> [/v1/openvpn/clientslist] from:127.0.0.1 costs:0.210 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
+2025-06-17 10:46:31,486 ERROR 46092   ---  [Thread-6] - Traceback (most recent call last):
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/site-packages/flask/app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/site-packages/lin/jwt.py", line 65, in wrapper
+    return fn(*args, **kwargs)
+  File "/Users/xiaoyunjie/PycharmProjects/openvpn-cms-flask/app/api/v1/openvpn.py", line 244, in get_clientslist
+    vpn_session = manager_info.collect_data_sessions(VPN_ADDRESS, VPN_PORT)
+  File "/Users/xiaoyunjie/PycharmProjects/openvpn-cms-flask/app/libs/manager_info.py", line 253, in collect_data_sessions
+    self._socket_connect(host, port)
+  File "/Users/xiaoyunjie/PycharmProjects/openvpn-cms-flask/app/libs/manager_info.py", line 97, in _socket_connect
+    self.s = socket.create_connection((host, port), timeout)
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/socket.py", line 820, in create_connection
+    raise err
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/socket.py", line 808, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 61] Connection refused
+
+2025-06-17 10:46:31,490 DEBUG 46092   ---  [Thread-6] - [GET] -> [/v1/openvpn/clientslist] from:127.0.0.1 costs:15.280 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
+2025-06-17 10:46:31,495 DEBUG 46092   ---  [Thread-7] - [OPTIONS] -> [/v1/openvpn/totalvisits] from:127.0.0.1 costs:0.170 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
+2025-06-17 10:46:31,505 DEBUG 46092   ---  [Thread-8] - [GET] -> [/v1/openvpn/totalvisits] from:127.0.0.1 costs:8.030 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
+2025-06-17 10:46:31,511 DEBUG 46092   ---  [Thread-9] - [OPTIONS] -> [/v1/openvpn/totalusers] from:127.0.0.1 costs:0.180 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
+2025-06-17 10:46:31,518 DEBUG 46092   ---  [Thread-10] - [GET] -> [/v1/openvpn/totalusers] from:127.0.0.1 costs:5.230 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
+2025-06-17 10:46:31,524 DEBUG 46092   ---  [Thread-11] - [OPTIONS] -> [/v1/openvpn/clientsconnected] from:127.0.0.1 costs:0.190 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
+2025-06-17 10:46:31,528 ERROR 46092   ---  [Thread-12] - Traceback (most recent call last):
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/site-packages/flask/app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/site-packages/lin/jwt.py", line 65, in wrapper
+    return fn(*args, **kwargs)
+  File "/Users/xiaoyunjie/PycharmProjects/openvpn-cms-flask/app/api/v1/openvpn.py", line 235, in get_clients_connected
+    nclients = manager_info.collect_data_stats(VPN_ADDRESS, VPN_PORT)
+  File "/Users/xiaoyunjie/PycharmProjects/openvpn-cms-flask/app/libs/manager_info.py", line 245, in collect_data_stats
+    self._socket_connect(host, port)
+  File "/Users/xiaoyunjie/PycharmProjects/openvpn-cms-flask/app/libs/manager_info.py", line 97, in _socket_connect
+    self.s = socket.create_connection((host, port), timeout)
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/socket.py", line 820, in create_connection
+    raise err
+  File "/Users/xiaoyunjie/opt/anaconda3/envs/openvpn-cms-flask/lib/python3.8/socket.py", line 808, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 61] Connection refused
+
+2025-06-17 10:46:31,528 DEBUG 46092   ---  [Thread-12] - [GET] -> [/v1/openvpn/clientsconnected] from:127.0.0.1 costs:2.600 ms data:{
+	param: {"handleError": "true"}, 
+	body: {}
+} 
